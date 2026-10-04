@@ -18,6 +18,11 @@
     RewriteCond %{REQUEST_URI} (.+)/$
     RewriteRule ^ %1 [L,R=301]
 
+    # The admin panel assets live in `public/admin`, so the `/admin` route would
+    # normally be shadowed by that directory. Force the bare admin route to the
+    # front controller while still letting `/admin/...` assets be served.
+    RewriteRule ^admin/?$ index.php [L]
+
     # Send Requests To Front Controller...
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f

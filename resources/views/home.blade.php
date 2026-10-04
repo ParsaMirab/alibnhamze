@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'دبیرستان علی بن حمزه')
+@section('title', 'هنرستان علی بن حمزه')
 
 @section('content')
     <div dir="rtl" class="font-sans bg-white text-slate-800 antialiased">
@@ -13,7 +13,7 @@
                     {{-- Logo --}}
                     <a href="#" class="flex items-center gap-3">
                         <div class="hidden sm:block">
-                            <p class="font-bold text-slate-900 text-base leading-tight">دبیرستان علی بن حمزه</p>
+                            <p class="font-bold text-slate-900 text-base leading-tight">هنرستان علی بن حمزه</p>
                             <p class="text-xs text-slate-500">دانش، ایمان، آینده روشن</p>
                         </div>
                     </a>
@@ -90,7 +90,7 @@
             {{-- Background Image --}}
             <div class="absolute inset-0">
                 <img src="{{ asset('images/hero/shrine-banner.jpg') }}"
-                     alt="دبیرستان علی بن حمزه"
+                     alt="هنرستان علی بن حمزه"
                      class="w-full h-full object-cover object-center">
 
                 {{-- گرادیان سفید فقط از راست (محل متن) و به سرعت محو می‌شود --}}
@@ -111,7 +111,7 @@
                         <div class="inline-flex items-center gap-3 mb-6">
                             <span class="w-8 h-px bg-[#0F3D62]/40"></span>
                             <span class="text-xs font-bold tracking-wider text-[#0F3D62]">
-                        دبیرستان علی بن حمزه
+                        هنرستان علی بن حمزه
                     </span>
                         </div>
 
@@ -128,7 +128,7 @@
 
                         {{-- Description --}}
                         <p class="mt-7 text-base lg:text-lg leading-9 text-slate-600 max-w-xl">
-                            دبیرستان علی بن حمزه با تکیه بر اساتید مجرب، محیطی امن و برنامه‌های
+                            هنرستان علی بن حمزه با تکیه بر اساتید مجرب، محیطی امن و برنامه‌های
                             آموزشی به‌روز، دانش‌آموزانی متعهد و متخصص برای فردای ایران عزیز پرورش می‌دهد.
                         </p>
 
@@ -285,7 +285,7 @@
                             در کنار هم رشد می‌کنند
                         </h2>
                         <p class="mt-6 text-base leading-8 text-slate-600">
-                            دبیرستان علی بن حمزه با هدف تربیت نسلی متعهد، متخصص و اخلاق‌مدار
+                            هنرستان علی بن حمزه با هدف تربیت نسلی متعهد، متخصص و اخلاق‌مدار
                             فعالیت خود را از سال ۱۳۷۸ آغاز کرده است. ما باور داریم آموزش زمانی
                             ارزشمند است که در کنار پرورش اخلاق و ایمان باشد.
                         </p>
@@ -353,7 +353,7 @@
                 <div class="text-center max-w-2xl mx-auto">
                     <span class="text-xs font-bold tracking-wider text-[#0F3D62]">مزیت‌های ما</span>
                     <h2 class="mt-4 text-3xl lg:text-4xl font-black text-slate-900">
-                        چرا دبیرستان علی بن حمزه؟
+                        چرا هنرستان علی بن حمزه؟
                     </h2>
                     <p class="mt-4 text-slate-600 leading-8">
                         ما با تمرکز بر کیفیت آموزش و پرورش اخلاقی، محیطی متفاوت برای دانش‌آموزان فراهم کرده‌ایم.
@@ -564,16 +564,62 @@
             </div>
         </section>
         {{-- ================= QUOTE ================= --}}
-        <section class="py-20 bg-slate-50 border-y border-slate-100">
-            <div class="max-w-4xl mx-auto px-6 text-center">
-                <svg class="w-10 h-10 mx-auto text-[#0F3D62]/30" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M9.983 3v7.391c0 5.704-3.731 9.57-8.983 10.609l-.995-2.151c2.432-.917 3.995-3.638 3.995-5.849h-4v-10h9.983zm14.017 0v7.391c0 5.704-3.748 9.571-9 10.609l-.996-2.151c2.433-.917 3.996-3.638 3.996-5.849h-3.983v-10h9.983z"/>
-                </svg>
-                <blockquote class="mt-6 text-xl sm:text-2xl lg:text-3xl font-bold text-slate-800 leading-relaxed">
-                    «علم، چراغ راه است؛<br>
-                    و ایمان، بهترین همراه در مسیر زندگی.»
-                </blockquote>
-                <p class="mt-6 text-sm text-slate-500">— شعار دبیرستان علی بن حمزه</p>
+        <section class="py-16 sm:py-20 lg:py-24 bg-slate-50">
+            <div class="max-w-7xl mx-auto px-6 lg:px-10">
+
+                <div
+                    class="relative overflow-hidden rounded-[28px]
+                   bg-white border border-slate-100
+                   min-h-[220px]"
+                >
+
+                    <!-- Background -->
+                    <img
+                        src="{{ asset('images/quote-banner.png') }}"
+                        alt=""
+                        class="absolute inset-0 w-full h-full object-cover object-center"
+                    >
+
+                    <!-- Overlay: در موبایل قوی‌تر، در دسکتاپ ملایم -->
+                    <div
+                        class="absolute inset-0
+                       bg-gradient-to-l
+                       from-white/70 via-white/80 to-white/90
+                       lg:from-transparent lg:via-white/50 lg:to-white/90">
+                    </div>
+
+                    <!-- Content -->
+                    <div class="relative z-10 flex items-center
+                        min-h-[220px] py-10 lg:py-0">
+
+                        <div
+                            class="w-full lg:w-[60%]
+                           mx-auto lg:mr-auto lg:ml-0
+                           px-6 sm:px-8 lg:px-16
+                           text-center lg:text-right"
+                        >
+
+                            <blockquote
+                                class="text-base sm:text-lg lg:text-2xl
+                               font-bold
+                               text-slate-900
+                               leading-[1.9]"
+                            >
+                                «علم، چراغ راه است؛
+                                <br>
+                                و ایمان، بهترین همراه در مسیر زندگی.»
+                            </blockquote>
+
+                            <p class="mt-3 text-xs lg:text-sm text-slate-500">
+                                — شعار هنرستان علی بن حمزه
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
             </div>
         </section>
 
@@ -589,7 +635,7 @@
                     <div class="relative flex flex-col lg:flex-row lg:items-center justify-between gap-8">
                         <div class="max-w-xl">
                             <h2 class="text-2xl sm:text-3xl lg:text-4xl font-black text-white leading-tight">
-                                آماده‌ی ثبت‌نام فرزندتان در دبیرستان علی بن حمزه هستید؟
+                                آماده‌ی ثبت‌نام فرزندتان در هنرستان علی بن حمزه هستید؟
                             </h2>
                             <p class="mt-4 text-white/70 leading-8">
                                 همین امروز با ما تماس بگیرید یا به صورت آنلاین ثبت‌نام کنید
@@ -627,12 +673,12 @@
                     <div class="md:col-span-2">
                         <div class="flex items-center gap-3">
                             <div>
-                                <p class="text-white font-bold text-lg">دبیرستان علی بن حمزه</p>
+                                <p class="text-white font-bold text-lg">هنرستان علی بن حمزه</p>
                                 <p class="text-xs text-slate-500">دانش، ایمان، آینده روشن</p>
                             </div>
                         </div>
                         <p class="mt-5 text-sm leading-7 max-w-md">
-                            دبیرستان علی بن حمزه با هدف تربیت نسلی متعهد، متخصص و اخلاق‌مدار،
+                            هنرستان علی بن حمزه با هدف تربیت نسلی متعهد، متخصص و اخلاق‌مدار،
                             از سال ۱۳۷۸ در خدمت دانش‌آموزان این مرز و بوم است.
                         </p>
                     </div>
@@ -679,7 +725,7 @@
 
                 <div class="mt-14 pt-8 border-t border-slate-800 flex flex-col sm:flex-row justify-between
                         items-center gap-4 text-xs text-slate-500">
-                    <p>© ۱۴۰۴ دبیرستان علی بن حمزه. تمامی حقوق محفوظ است.</p>
+                    <p>© ۱۴۰۴ هنرستان علی بن حمزه. تمامی حقوق محفوظ است.</p>
                     <div class="flex gap-5">
                         <a href="#" class="hover:text-white transition-colors">قوانین</a>
                         <a href="#" class="hover:text-white transition-colors">حریم خصوصی</a>
