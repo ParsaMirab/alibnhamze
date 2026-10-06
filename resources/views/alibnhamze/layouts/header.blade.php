@@ -3,7 +3,7 @@
         <div class="flex items-center justify-between h-16 sm:h-20">
 
             {{-- Logo --}}
-            <a href="#" class="flex items-center gap-3 min-w-0">
+            <a href="{{route('home')}}" class="flex items-center gap-3 min-w-0">
                 <div
                     class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#0F3D62] flex items-center justify-center shrink-0">
                     <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">

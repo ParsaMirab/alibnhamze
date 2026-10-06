@@ -38,7 +38,7 @@
                     <footer>
                         <div class="kt-container-fixed">
                             <div class="flex justify-center md:justify-start items-center py-5">
-                                <div class="text-sm text-muted-foreground">© @jalali(now(), 'Y') شغلستون</div>
+                                <div class="text-sm text-muted-foreground">علی بن حمزه</div>
                             </div>
                         </div>
                     </footer>

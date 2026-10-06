@@ -9,4 +9,7 @@ class AuthController extends Controller
     public function login(){
         return view('alibnhamze.auth.login');
     }
+    public function preRegister(){
+        return view('alibnhamze.auth.pre-register');
+    }
 }
