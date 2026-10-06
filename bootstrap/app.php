@@ -17,10 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
         },
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        // Admin panel guards use their own guard, so guests and authenticated
-        // users must be redirected to the admin routes (the default `login`
-        // route does not exist in this application).
-        $middleware->redirectGuestsTo(fn () => route('admin.login'));
+        $middleware->redirectGuestsTo(fn () => route('login.showLoginForm'));
         $middleware->redirectUsersTo(fn () => route('admin.dashboard'));
     })
     ->withExceptions(function (Exceptions $exceptions): void {

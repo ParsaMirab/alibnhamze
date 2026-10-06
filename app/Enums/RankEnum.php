@@ -7,6 +7,7 @@ enum RankEnum: string
     case MANAGER = 'manager';
     case STUDENT = 'student';
     case DEPUTY = 'deputy';
+    case TEACHER = 'teacher';
     case PARENT = 'parent';
     public function label(): string
     {
@@ -14,6 +15,7 @@ enum RankEnum: string
             self::MANAGER => 'مدیر',
             self::STUDENT => 'دانش‌آموز',
             self::DEPUTY => 'معاون',
+            self::TEACHER => 'معلم',
             self::PARENT => 'اولیا',
         };
     }

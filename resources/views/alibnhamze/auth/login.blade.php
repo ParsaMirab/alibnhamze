@@ -24,21 +24,19 @@
 
                     {{-- Title --}}
                     <div class="text-center mb-8">
-                        {{-- Title --}}
                         <h1 class="text-2xl sm:text-[28px] font-black text-slate-900 tracking-tight">
                             ورود به سامانه دانش آموزی
                         </h1>
 
-                        {{-- Subtitle --}}
                         <p class="mt-3 text-sm text-slate-500 leading-6 max-w-xs mx-auto">
                             برای ورود، شماره تلفن همراه خود را وارد کنید
                         </p>
 
                         {{-- Notice --}}
                         <div class="mt-6 text-right rounded-2xl
-                bg-amber-50/70 border border-amber-200/70
-                px-4 py-3.5
-                flex items-start gap-3">
+                                    bg-amber-50/70 border border-amber-200/70
+                                    px-4 py-3.5
+                                    flex items-start gap-3">
                             <div class="shrink-0 w-8 h-8 rounded-xl bg-amber-100 flex items-center justify-center mt-0.5">
                                 <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -59,15 +57,14 @@
                                 </p>
                             </div>
                         </div>
-
                     </div>
 
                     {{-- ================= STEP 1: Phone ================= --}}
-                    <form id="phone-form" method="POST" action="#" class="space-y-5">
+                    <form id="phone-form" method="POST" action="{{ route('login.sendOtp') }}" class="space-y-6">
                         @csrf
 
                         <div>
-                            <label for="phone" class="block text-sm font-semibold text-slate-700 mb-2">
+                            <label for="phone" class="block text-sm font-medium text-slate-700 mb-2">
                                 شماره تلفن همراه
                             </label>
                             <div class="relative">
@@ -92,7 +89,7 @@
                                            text-slate-900 placeholder:text-slate-400
                                            focus:bg-white focus:border-[#0F3D62]
                                            focus:ring-2 focus:ring-[#0F3D62]/15 focus:outline-none
-                                           transition-all duration-200"
+                                           transition-all duration-200 sm:text-base"
                                 >
                             </div>
 
@@ -101,14 +98,19 @@
                             @enderror
                         </div>
 
-                        <button type="submit"
-                                class="w-full inline-flex items-center justify-center gap-2
+                        <button type="submit" id="send-otp-btn"
+                                class="w-full inline-flex items-center justify-center gap-3
                                        py-3.5 rounded-xl bg-[#0F3D62] text-white text-sm font-bold
                                        shadow-lg shadow-[#0F3D62]/25
                                        hover:bg-[#0a2d4a] active:bg-[#0a2d4a]
-                                       transition-all duration-200">
-                            دریافت کد تأیید
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                       disabled:opacity-60 disabled:cursor-not-allowed
+                                       transition-all duration-200 sm:text-base">
+                            <span id="send-otp-text">دریافت کد تأیید</span>
+                            <svg id="send-otp-spinner" class="hidden w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                            </svg>
+                            <svg id="send-otp-arrow" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                       d="M15 19l-7-7 7-7"/>
                             </svg>
@@ -116,8 +118,8 @@
                     </form>
 
                     {{-- ================= STEP 2: OTP ================= --}}
-                    <form id="otp-form" method="POST" action="#"
-                          class="space-y-5 hidden">
+                    <form id="otp-form" method="POST" action="{{ route('login.verifyOtp') }}"
+                          class="space-y-7 hidden">
                         @csrf
                         <input type="hidden" name="phone" id="otp-phone" value="{{ old('phone') }}">
 
@@ -130,38 +132,51 @@
                             </p>
                         </div>
 
+                        {{-- Beta Mode OTP Display --}}
+                        <div id="beta-otp-box" class="hidden mb-5 p-4 bg-blue-50 border-l-4 border-blue-500 rounded-xl">
+                            <p class="text-sm font-medium text-blue-800 flex items-center justify-center gap-2">
+                                <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M12 9v2m0 4h.01M5.07 19h13.86a2 2 0 001.74-3L13.74 4a2 2 0 00-3.48 0L3.33 16a2 2 0 001.74 3z"/>
+                                </svg>
+                                Beta mode — Your code: <span id="beta-otp-code" class="font-bold text-blue-600"></span>
+                            </p>
+                        </div>
+
                         <div>
-                            <label for="code" class="block text-sm font-semibold text-slate-700 mb-2">
+                            <label for="code" class="block text-sm font-medium text-slate-700 mb-3">
                                 کد تأیید ۶ رقمی
                             </label>
-                            <input
-                                type="text"
-                                id="code"
-                                name="code"
-                                inputmode="numeric"
-                                autocomplete="one-time-code"
-                                maxlength="6"
-                                placeholder="- - - - - -"
-                                dir="ltr"
-                                class="w-full px-4 py-4 rounded-xl text-center tracking-[0.6em]
-                                       text-2xl font-black
-                                       bg-slate-50 border border-slate-200
-                                       text-slate-900 placeholder:text-slate-300
-                                       focus:bg-white focus:border-[#0F3D62]
-                                       focus:ring-2 focus:ring-[#0F3D62]/15 focus:outline-none
-                                       transition-all duration-200"
-                            >
-                            @error('code')
-                            <p class="mt-2 text-xs text-red-600 text-center">{{ $message }}</p>
-                            @enderror
+                            <div class="relative">
+                                <input
+                                    type="text"
+                                    id="code"
+                                    name="code"
+                                    inputmode="numeric"
+                                    autocomplete="one-time-code"
+                                    maxlength="6"
+                                    placeholder="- - - - - -"
+                                    dir="ltr"
+                                    class="w-full px-4 py-4 rounded-xl text-center tracking-[0.6em]
+                                           text-2xl font-black
+                                           bg-slate-50 border border-slate-200
+                                           text-slate-900 placeholder:text-slate-300
+                                           focus:bg-white focus:border-[#0F3D62]
+                                           focus:ring-2 focus:ring-[#0F3D62]/15 focus:outline-none
+                                           transition-all duration-200 sm:text-base"
+                                >
+                                @error('code')
+                                <p class="mt-2 text-xs text-red-600 text-center">{{ $message }}</p>
+                                @enderror
+                            </div>
                         </div>
 
                         <button type="submit"
-                                class="w-full inline-flex items-center justify-center gap-2
+                                class="w-full inline-flex items-center justify-center gap-4
                                        py-3.5 rounded-xl bg-[#0F3D62] text-white text-sm font-bold
                                        shadow-lg shadow-[#0F3D62]/25
                                        hover:bg-[#0a2d4a] active:bg-[#0a2d4a]
-                                       transition-all duration-200">
+                                       transition-all duration-200 sm:text-base">
                             ورود به سامانه
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -170,10 +185,10 @@
                         </button>
 
                         {{-- Resend --}}
-                        <div class="flex items-center justify-between text-xs pt-1">
+                        <div class="flex items-center justify-between text-xs pt-3">
                             <button type="button" id="edit-phone"
-                                    class="inline-flex items-center gap-1 text-slate-500
-                                           hover:text-[#0F3D62] transition-colors">
+                                    class="inline-flex items-center gap-3 text-slate-500
+                                           hover:text-[#0F3D62] transition-colors sm:text-base">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                           d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
@@ -183,7 +198,7 @@
 
                             <button type="button" id="resend-code"
                                     class="font-semibold text-[#0F3D62] disabled:text-slate-400
-                                           disabled:cursor-not-allowed transition-colors">
+                                           disabled:cursor-not-allowed transition-colors sm:text-base">
                                 ارسال مجدد کد
                                 <span id="resend-timer"></span>
                             </button>
@@ -222,70 +237,153 @@
     {{-- ================= Scripts ================= --}}
     <script>
         (function () {
-            const phoneForm = document.getElementById('phone-form');
-            const otpForm = document.getElementById('otp-form');
-            const phoneInput = document.getElementById('phone');
-            const otpPhone = document.getElementById('otp-phone');
+            const phoneForm    = document.getElementById('phone-form');
+            const otpForm      = document.getElementById('otp-form');
+            const phoneInput   = document.getElementById('phone');
+            const otpPhone     = document.getElementById('otp-phone');
             const phoneDisplay = document.getElementById('phone-display');
-            const codeInput = document.getElementById('code');
-            const editPhone = document.getElementById('edit-phone');
-            const resendBtn = document.getElementById('resend-code');
-            const resendTimer = document.getElementById('resend-timer');
+            const codeInput    = document.getElementById('code');
+            const editPhone    = document.getElementById('edit-phone');
+            const resendBtn    = document.getElementById('resend-code');
+            const resendTimer  = document.getElementById('resend-timer');
+
+            const sendOtpBtn     = document.getElementById('send-otp-btn');
+            const sendOtpText    = document.getElementById('send-otp-text');
+            const sendOtpSpinner = document.getElementById('send-otp-spinner');
+            const sendOtpArrow   = document.getElementById('send-otp-arrow');
+
+            const betaOtpBox  = document.getElementById('beta-otp-box');
+            const betaOtpCode = document.getElementById('beta-otp-code');
 
             const hasOtpError = {{ $errors->has('code') ? 'true' : 'false' }};
-            const oldPhone = @json(old('phone'));
+            const oldPhone    = @json(old('phone'));
 
+            // ====== نمایش مرحله OTP ======
             function goToOtp(phone) {
                 phoneForm.classList.add('hidden');
                 otpForm.classList.remove('hidden');
 
                 otpPhone.value = phone || '';
                 phoneDisplay.textContent = phone || '';
-                codeInput.focus();
+                codeInput?.focus();
                 startResendTimer(60);
             }
 
             function goToPhone() {
                 otpForm.classList.add('hidden');
                 phoneForm.classList.remove('hidden');
-                phoneInput.focus();
+                phoneInput?.focus();
             }
 
-            // ارسال فرم شماره (فقط برای نمایش مرحله ۲ - ارسال واقعی توسط سرور)
-            phoneForm.addEventListener('submit', function (e) {
-                const value = phoneInput.value.trim();
-                // اعتبارسنجی سبک سمت کلاینت (سرور هم باید چک کند)
-                if (!/^09\d{9}$/.test(value)) {
-                    e.preventDefault();
-                    phoneInput.focus();
-                    return;
-                }
-                otpPhone.value = value;
-            });
-
-            // اگر در حالت OTP هستیم، مرحله را تنظیم کن
+            // ====== اگر با خطای code برگشتیم، مرحله OTP را نشان بده ======
             if (hasOtpError && oldPhone) {
                 goToOtp(oldPhone);
             }
 
-            // ویرایش شماره
-            editPhone?.addEventListener('click', goToPhone);
+            // ====== ارسال فرم شماره (بدون رفرش) ======
+            phoneForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
 
-            // فقط عدد در فیلد کد
+                let value = phoneInput.value.trim();
+
+                // تبدیل اعداد فارسی/عربی به انگلیسی
+                value = value
+                    .replace(/[۰-۹]/g, d => String.fromCharCode(d.charCodeAt(0) - 1728))
+                    .replace(/[٠-٩]/g, d => String.fromCharCode(d.charCodeAt(0) - 1584));
+
+                if (!/^09\d{9}$/.test(value)) {
+                    phoneInput.focus();
+                    phoneInput.classList.add('border-red-400');
+                    setTimeout(() => phoneInput.classList.remove('border-red-400'), 1500);
+                    return;
+                }
+
+                // UI: حالت loading
+                sendOtpBtn.disabled = true;
+                sendOtpText.textContent = 'در حال ارسال...';
+                sendOtpArrow.classList.add('hidden');
+                sendOtpSpinner.classList.remove('hidden');
+
+                try {
+                    const res = await fetch('{{ route('login.sendOtp') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json',
+                        },
+                        body: JSON.stringify({ phone: value }),
+                    });
+
+                    const data = await res.json().catch(() => ({}));
+
+                    if (!res.ok) {
+                        // در صورت خطا، برگرد به فرم شماره
+                        sendOtpBtn.disabled = false;
+                        sendOtpText.textContent = 'دریافت کد تأیید';
+                        sendOtpArrow.classList.remove('hidden');
+                        sendOtpSpinner.classList.add('hidden');
+
+                        alert(data.message || 'خطا در ارسال کد. لطفاً دوباره تلاش کنید.');
+                        return;
+                    }
+
+                    // نمایش کد بتا (اگر سرور داده بود)
+                    if (data.otp_code) {
+                        betaOtpCode.textContent = data.otp_code;
+                        betaOtpBox.classList.remove('hidden');
+                    } else {
+                        betaOtpBox.classList.add('hidden');
+                    }
+
+                    // برو به مرحله OTP
+                    goToOtp(value);
+
+                    // برگرداندن دکمه به حالت عادی
+                    sendOtpBtn.disabled = false;
+                    sendOtpText.textContent = 'دریافت کد تأیید';
+                    sendOtpArrow.classList.remove('hidden');
+                    sendOtpSpinner.classList.add('hidden');
+
+                } catch (err) {
+                    sendOtpBtn.disabled = false;
+                    sendOtpText.textContent = 'دریافت کد تأیید';
+                    sendOtpArrow.classList.remove('hidden');
+                    sendOtpSpinner.classList.add('hidden');
+
+                    alert('خطا در ارتباط با سرور. لطفاً دوباره تلاش کنید.');
+                }
+            });
+
+            // ====== ویرایش شماره ======
+            editPhone?.addEventListener('click', function () {
+                goToPhone();
+                codeInput.value = '';
+                if (timerId) {
+                    clearInterval(timerId);
+                    resendBtn.disabled = false;
+                    resendTimer.textContent = '';
+                }
+                betaOtpBox.classList.add('hidden');
+            });
+
+            // ====== فقط عدد در فیلد کد ======
             codeInput?.addEventListener('input', function () {
                 this.value = this.value.replace(/\D/g, '').slice(0, 6);
             });
 
-            // فقط عدد در فیلد شماره
+            // ====== فقط عدد در فیلد شماره ======
             phoneInput?.addEventListener('input', function () {
                 this.value = this.value.replace(/\D/g, '').slice(0, 11);
             });
 
-            // تایمر ارسال مجدد
+            // ====== تایمر ارسال مجدد ======
             let timerId = null;
 
             function startResendTimer(seconds) {
+                if (!resendBtn || !resendTimer) return;
                 if (timerId) clearInterval(timerId);
+
                 resendBtn.disabled = true;
                 let remaining = seconds;
 
@@ -303,26 +401,33 @@
                 timerId = setInterval(tick, 1000);
             }
 
-            // ارسال مجدد (نمونه - درخواست به سرور)
+            // ====== ارسال مجدد کد ======
             resendBtn?.addEventListener('click', async function () {
                 const phone = otpPhone.value;
                 if (!phone) return;
 
                 resendBtn.disabled = true;
                 try {
-                    await fetch('#', {
+                    const response = await fetch('{{ route('login.sendOtp') }}', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                             'X-CSRF-TOKEN': '{{ csrf_token() }}',
                             'Accept': 'application/json',
                         },
-                        body: JSON.stringify({phone}),
+                        body: JSON.stringify({ phone }),
                     });
-                } catch (e) {
 
+                    const data = await response.json().catch(() => ({}));
+
+                    if (data.otp_code) {
+                        betaOtpCode.textContent = data.otp_code;
+                        betaOtpBox.classList.remove('hidden');
+                    }
+                } catch (e) {
+                    alert('خطا در ارتباط با سرور.');
                 }
-                startResendTimer(60);
+                startResendTimer(90);
             });
         })();
     </script>

@@ -39,7 +39,7 @@
 
             {{-- Desktop CTA --}}
             <div class="hidden lg:flex items-center gap-3">
-                <a href="{{route('login')}}"
+                <a href="{{route('login.showLoginForm')}}"
                    class="px-5 py-2.5 text-sm font-semibold rounded-lg
                               text-[#0F3D62] border border-slate-200
                               hover:border-[#0F3D62] transition-colors">
