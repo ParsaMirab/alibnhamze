@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="دبیرستان علی بن حمزه - دانش، ایمان، آینده روشن">
-    <title>@yield('title', 'دبیرستان علی بن حمزه')</title>
+    <meta name="description" content="هنرستان علی بن حمزه - دانش، ایمان، آینده روشن">
+    <title>@yield('title', 'هنرستان علی بن حمزه')</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -14,8 +14,11 @@
 </head>
 
 <body class="bg-white antialiased">
-@yield('content')
-
+@include('alibnhamze.layouts.header')
+    <main>
+        @yield('content')
+    </main>
+@include('alibnhamze.layouts.footer')
 @stack('scripts')
 </body>
 </html>
