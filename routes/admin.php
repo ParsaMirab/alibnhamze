@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\ClassStudentController;
 use App\Http\Controllers\Admin\ClassTeacherController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\SchoolClassController;
+use App\Http\Controllers\Admin\StudentController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('admin')->name('admin.')->group(function () {
@@ -50,6 +51,16 @@ Route::prefix('admin')->name('admin.')->group(function () {
                     Route::delete('/{assignment}', [ClassTeacherController::class, 'destroy'])->name('destroy');
                 });
             });
+        });
+
+        // Student Management Routes
+        Route::prefix('students')->name('students.')->group(function () {
+            Route::get('/', [StudentController::class, 'index'])->name('index');
+            Route::get('/create', [StudentController::class, 'create'])->name('create');
+            Route::post('/', [StudentController::class, 'store'])->name('store');
+            Route::get('/{student}/edit', [StudentController::class, 'edit'])->name('edit');
+            Route::put('/{student}', [StudentController::class, 'update'])->name('update');
+            Route::delete('/{student}', [StudentController::class, 'destroy'])->name('destroy');
         });
 
         Route::post('/logout', [AuthController::class, 'logout'])->name('logout');

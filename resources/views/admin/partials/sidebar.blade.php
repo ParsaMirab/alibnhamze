@@ -56,6 +56,22 @@
                     </nav>
                 </div>
             @endcan
+
+            @can('viewAny', \App\Models\Student::class)
+                <div class="mb-5">
+                    <h3 class="text-sm text-muted-foreground px-5 mb-3">مدیریت دانش‌آموزان</h3>
+                    <nav class="kt-menu flex flex-col w-full gap-1.5 px-3.5" data-kt-menu="true">
+                        <div class="kt-menu-item {{ request()->routeIs('admin.students.*') ? 'active' : '' }}">
+                            <a class="kt-menu-link gap-2.5 py-2 px-2.5 rounded-md kt-menu-item-active:bg-accent/60 kt-menu-link-hover:bg-accent/60" href="{{ route('admin.students.index') }}">
+                            <span class="kt-menu-icon text-lg text-secondary-foreground">
+                                <i class="ki-filled ki-users"></i>
+                            </span>
+                                <span class="kt-menu-title text-sm text-foreground font-medium">مدیریت دانش‌آموزان</span>
+                            </a>
+                        </div>
+                    </nav>
+                </div>
+            @endcan
         </div>
     </div>
 
