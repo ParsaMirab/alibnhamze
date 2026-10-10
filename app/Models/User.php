@@ -7,7 +7,7 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -29,5 +29,21 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Get the teacher class assignments for the user.
+     */
+    public function teacherClasses(): HasMany
+    {
+        return $this->hasMany(ClassTeacher::class, 'teacher_id');
+    }
+
+    /**
+     * Get the student class assignments for the user.
+     */
+    public function studentClasses(): HasMany
+    {
+        return $this->hasMany(ClassStudent::class, 'student_id');
     }
 }

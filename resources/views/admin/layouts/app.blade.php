@@ -48,6 +48,8 @@
     </div>
     <div class="admin-sidebar-backdrop" data-admin-sidebar-close></div>
 
+    @stack('modals')
+
     <script src="{{ asset('admin/js/core.bundle.js') }}"></script>
     <script src="{{ asset('admin/vendors/ktui/ktui.min.js') }}"></script>
     <script src="{{ asset('admin/js/admin.js') }}"></script>
