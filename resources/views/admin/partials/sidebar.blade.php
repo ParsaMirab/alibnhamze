@@ -12,21 +12,49 @@
            dark [--kt-drawer-enable:true] lg:[--kt-drawer-enable:false]"
 >
 
-    {{-- ================= HEADER ================= --}}
-    <div class="shrink-0 border-b border-white/10" id="sidebar_header">
-        <div class="flex items-center gap-3 px-5 h-[76px]">
 
-            <div class="flex flex-col gap-1 min-w-0">
-                <div class="text-white text-base font-bold">
-                    علی بن حمزه
+    {{-- ================= SIDEBAR HEADER ================= --}}
+    <div class="shrink-0 px-3.5 pt-4 pb-4 border-b border-white/10"
+         id="sidebar_header">
+
+        <div class="relative overflow-hidden rounded-xl
+                border border-white/15 bg-white/[0.04]
+                px-3.5 py-3.5
+                transition-colors duration-200
+                hover:border-white/25 hover:bg-white/[0.07]">
+
+            <div class="flex items-center gap-3">
+
+                {{-- School Icon --}}
+                <div class="flex size-11 shrink-0 items-center justify-center
+                        rounded-lg border border-white/15
+                        bg-white/10 text-white">
+
+                    <i class="ki-filled ki-teacher text-xl"></i>
+
                 </div>
 
-                <div class="text-sm text-white">
-                    مدیریت هنرستان
+                {{-- School Information --}}
+                <div class="flex min-w-0 flex-col gap-1">
+
+                    <div class="truncate text-sm font-bold tracking-tight text-white">
+                        هنرستان علی بن حمزه
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <span class="size-1.5 shrink-0 rounded-full bg-emerald-400"></span>
+
+                        <span class="truncate text-[11px] font-medium text-white">
+                        سامانه مدیریت هنرستان
+                    </span>
+                    </div>
+
                 </div>
+
             </div>
 
         </div>
+
     </div>
 
     {{-- ================= MENU ================= --}}
@@ -75,9 +103,13 @@
                 $canViewStudents = $user->can('viewAny', \App\Models\Student::class);
                 $canViewTeachers = $user->can('viewAny', \App\Models\Teacher::class);
                 $canViewMyClasses = $user->can('viewTeacherClasses', \App\Models\SchoolClass::class);
+                $canManageAbsences = in_array($user->rank, [
+                    RankEnum::MANAGER->value,
+                    RankEnum::DEPUTY->value,
+                ], true);
             @endphp
 
-            @if($canManageDeputies || $canViewClasses || $canViewStudents || $canViewTeachers)
+            @if($canManageDeputies || $canViewClasses || $canViewStudents || $canViewTeachers || $canManageAbsences)
 
                 <div class="mb-5">
 
@@ -173,6 +205,27 @@
                                     <span class="kt-menu-title text-sm text-foreground font-medium">
                                         مدیریت معلمان
                                     </span>
+                                </a>
+                            </div>
+
+                        @endif
+                        {{-- Absences Management --}}
+                        @if($canManageAbsences)
+
+                            <div class="kt-menu-item {{ request()->routeIs('admin.absences.*') ? 'active' : '' }}">
+                                <a
+                                    class="kt-menu-link gap-2.5 py-2.5 px-3 rounded-md
+                   kt-menu-item-active:bg-accent/60
+                   kt-menu-link-hover:bg-accent/60"
+                                    href="{{ route('admin.absences.index') }}"
+                                >
+            <span class="kt-menu-icon text-lg text-secondary-foreground">
+                <i class="ki-filled ki-calendar-tick"></i>
+            </span>
+
+                                    <span class="kt-menu-title text-sm text-foreground font-medium">
+                مدیریت غیبت‌ها
+            </span>
                                 </a>
                             </div>
 

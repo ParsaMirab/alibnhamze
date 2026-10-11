@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\SchoolClassController;
 use App\Http\Controllers\Admin\StudentController;
 use App\Http\Controllers\Admin\TeacherClassController;
 use App\Http\Controllers\Admin\TeacherController;
+use App\Http\Controllers\Admin\AbsenceController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('admin')->name('admin.')->group(function () {
@@ -73,6 +74,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('/', [TeacherClassController::class, 'index'])->name('index');
             Route::get('/{schoolClass}', [TeacherClassController::class, 'show'])->name('show');
             Route::post('/{schoolClass}/attendance', [TeacherClassController::class, 'storeAttendance'])->name('attendance.store');
+        });
+        Route::prefix('absences')->name('absences.')->group(function () {
+            Route::get('/', [AbsenceController::class, 'index'])->name('index');
+            Route::patch('status' , [AbsenceController::class, 'updateStatus'])->name('status');
+            Route::post('send-warning', [AbsenceController::class, 'sendWarnings'])->name('send-warning');
         });
 
         Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
