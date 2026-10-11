@@ -255,78 +255,133 @@
             <div class="grid gap-6 lg:grid-cols-3">
 
                 {{-- Recent Absences --}}
+
+                {{-- ================= RECENT ABSENCES ================= --}}
                 <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white lg:col-span-2">
 
                     <div class="flex items-center justify-between gap-3 border-b border-slate-100 p-5 sm:p-6">
-
                         <div>
                             <h2 class="text-base font-extrabold text-slate-900">
                                 آخرین غیبت‌های من
                             </h2>
 
                             <p class="mt-1 text-xs text-slate-500">
-                                آخرین سوابق ثبت‌شده در سامانه
+                                جزئیات آخرین سوابق حضور و غیاب شما
                             </p>
                         </div>
 
-                        <div class="rounded-lg bg-slate-50 px-3 py-2 text-xs font-medium text-slate-500">
-                            ۵ مورد آخر
-                        </div>
-
+                        <span class="rounded-lg bg-slate-50 px-3 py-2 text-xs font-medium text-slate-500">
+            ۵ مورد آخر
+        </span>
                     </div>
 
-                    <div class="p-5 sm:p-6">
+                    <div class="divide-y divide-slate-100 px-5 sm:px-6">
 
                         @forelse($recentAbsences as $absence)
+                            @php
+                                $assignment = $absence->classTeacher;
+                                $teacher = $assignment?->teacher;
 
-                            <div class="flex items-center justify-between gap-4 border-b border-slate-100 py-4 first:pt-0 last:border-0 last:pb-0">
+                                $teacherName = $teacher
+                                    ? trim($teacher->first_name . ' ' . $teacher->last_name)
+                                    : null;
+                            @endphp
 
-                                <div class="flex items-center gap-3">
+                            <div class="flex flex-col gap-4 py-5 sm:flex-row sm:items-center sm:justify-between">
 
-                                    <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100">
+                                <div class="flex items-start gap-3">
+
+                                    {{-- Subject icon --}}
+                                    <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#0F3D62]/10">
                                         <svg class="h-5 w-5 text-[#0F3D62]"
-                                             viewBox="0 0 24 24" fill="none"
-                                             stroke="currentColor" stroke-width="1.7">
-                                            <rect x="3" y="5" width="18" height="16" rx="2"/>
-                                            <path d="M7 3v4M17 3v4M3 10h18"/>
+                                             viewBox="0 0 24 24"
+                                             fill="none"
+                                             stroke="currentColor"
+                                             stroke-width="1.7"
+                                             stroke-linecap="round"
+                                             stroke-linejoin="round">
+                                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/>
+                                            <path d="M9 7h7M9 11h5"/>
                                         </svg>
                                     </div>
 
-                                    <div>
-                                        <p class="text-sm font-bold text-slate-800">
-                                            غیبت ثبت‌شده
-                                        </p>
+                                    <div class="min-w-0">
 
-                                        <p class="mt-1 text-xs text-slate-500">
+                                        {{-- Subject --}}
+                                        <h3 class="text-sm font-extrabold text-slate-800">
+                                            {{ $assignment?->subject ?? 'غیبت ثبت‌شده' }}
+                                        </h3>
 
-                                            {{
-                                                \App\Helpers\Jalali::format($absence->date)
-                                            }}
-                                        </p>
+                                        {{-- Teacher --}}
+                                        <div class="mt-2 flex items-center gap-2 text-xs text-slate-500">
+                                            <svg class="h-4 w-4 shrink-0"
+                                                 viewBox="0 0 24 24"
+                                                 fill="none"
+                                                 stroke="currentColor"
+                                                 stroke-width="1.7">
+                                                <circle cx="12" cy="8" r="4"/>
+                                                <path d="M5 21v-2a7 7 0 0 1 14 0v2"/>
+                                            </svg>
+
+                                            <span>
+                                معلم:
+                                <span class="font-semibold text-slate-700">
+                                    {{ $teacherName ?: 'ثبت نشده' }}
+                                </span>
+                            </span>
+                                        </div>
+
+                                        {{-- Date --}}
+                                        <div class="mt-2 flex items-center gap-2 text-xs text-slate-500">
+                                            <svg class="h-4 w-4 shrink-0"
+                                                 viewBox="0 0 24 24"
+                                                 fill="none"
+                                                 stroke="currentColor"
+                                                 stroke-width="1.7">
+                                                <rect x="3" y="5" width="18" height="16" rx="2"/>
+                                                <path d="M7 3v4M17 3v4M3 10h18"/>
+                                            </svg>
+
+                                            <span>
+                                تاریخ غیبت:
+                                <span class="font-medium text-slate-700">
+                                    {{ \App\Helpers\Jalali::format($absence->date) }}
+                                </span>
+                            </span>
+                                        </div>
+
                                     </div>
 
                                 </div>
 
-                                @if($absence->is_excused)
-                                    <span class="rounded-lg bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-700">
-                                    موجه
-                                </span>
-                                @else
-                                    <span class="rounded-lg bg-rose-50 px-3 py-1.5 text-xs font-bold text-rose-700">
-                                    غیرموجه
-                                </span>
-                                @endif
+                                {{-- Status --}}
+                                <div class="shrink-0 self-start sm:self-center">
+
+                                    @if($absence->is_excused)
+                                        <span class="inline-flex items-center gap-1.5 rounded-lg border border-emerald-100 bg-emerald-50 px-3 py-2 text-xs font-bold text-emerald-700">
+                            <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+                            غیبت موجه
+                        </span>
+                                    @else
+                                        <span class="inline-flex items-center gap-1.5 rounded-lg border border-rose-100 bg-rose-50 px-3 py-2 text-xs font-bold text-rose-700">
+                            <span class="h-1.5 w-1.5 rounded-full bg-rose-500"></span>
+                            غیبت غیرموجه
+                        </span>
+                                    @endif
+
+                                </div>
 
                             </div>
 
                         @empty
 
                             <div class="flex flex-col items-center justify-center py-12 text-center">
-
                                 <div class="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50">
                                     <svg class="h-7 w-7 text-emerald-600"
                                          viewBox="0 0 24 24"
-                                         fill="none" stroke="currentColor"
+                                         fill="none"
+                                         stroke="currentColor"
                                          stroke-width="1.7">
                                         <circle cx="12" cy="12" r="9"/>
                                         <path d="m8 12 3 3 5-6"/>
@@ -338,10 +393,8 @@
                                 </h3>
 
                                 <p class="mt-2 text-xs leading-7 text-slate-500">
-                                    در حال حاضر سابقه غیبتی برای شما
-                                    در سامانه وجود ندارد.
+                                    در حال حاضر سابقه غیبتی برای شما در سامانه وجود ندارد.
                                 </p>
-
                             </div>
 
                         @endforelse

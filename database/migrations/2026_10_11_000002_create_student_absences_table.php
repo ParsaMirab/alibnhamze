@@ -16,6 +16,10 @@ return new class extends Migration
             $table->date('date');
             $table->foreignId('student_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('class_id')->constrained('classes')->onDelete('cascade');
+            $table->foreignId('class_teacher_id')
+                ->nullable()
+                ->constrained('class_teachers')
+                ->nullOnDelete();
             $table->timestamps();
             $table->boolean('is_excused')->default(false);
             // A student can only be recorded absent once per class and date.

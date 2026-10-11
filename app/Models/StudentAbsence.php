@@ -40,4 +40,8 @@ class StudentAbsence extends Model
     {
         return $this->belongsTo(SchoolClass::class, 'class_id');
     }
+    public function classTeacher(): BelongsTo
+    {
+        return $this->belongsTo(ClassTeacher::class, 'class_teacher_id');
+    }
 }

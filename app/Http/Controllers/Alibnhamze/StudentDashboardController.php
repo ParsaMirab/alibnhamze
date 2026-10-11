@@ -33,6 +33,7 @@ class StudentDashboardController extends Controller
             ->count();
 
         $recentAbsences = (clone $absenceQuery)
+            ->with(['classTeacher.teacher'])
             ->orderByDesc('date')
             ->orderByDesc('id')
             ->limit(5)

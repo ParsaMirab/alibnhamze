@@ -140,6 +140,7 @@ class TeacherClassController extends Controller
                     'date' => $gregorianDate,
                     'created_at' => $now,
                     'updated_at' => $now,
+                    'class_teacher_id' => auth()->user()->id
                 ])->all();
 
                 StudentAbsence::query()->insert($rows);
