@@ -65,4 +65,12 @@ class User extends Authenticatable
             ->withPivot('relationship_type')
             ->withTimestamps();
     }
+
+    /**
+     * Get the absence records recorded for the user.
+     */
+    public function absences(): HasMany
+    {
+        return $this->hasMany(StudentAbsence::class, 'student_id');
+    }
 }

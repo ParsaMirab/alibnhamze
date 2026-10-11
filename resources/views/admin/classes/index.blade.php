@@ -184,13 +184,13 @@
 
                                         <td>
                                             <div class="flex flex-col gap-0.5">
-                                                <span>
-                                                    {{ $class->created_at?->format('Y/m/d') }}
-                                                </span>
+    <span>
+        {{ \App\Helpers\Jalali::format($class->created_at) }}
+    </span>
 
-                                                <span class="text-xs text-secondary-foreground">
-                                                    {{ $class->created_at?->format('H:i') }}
-                                                </span>
+                                                <span class="text-xs text-secondary-foreground" dir="ltr">
+        {{ $class->created_at?->format('H:i') ?? '—' }}
+    </span>
                                             </div>
                                         </td>
 

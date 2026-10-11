@@ -21,7 +21,7 @@
                     علی بن حمزه
                 </div>
 
-                <div class="text-sm text-white/70">
+                <div class="text-sm text-white">
                     مدیریت هنرستان
                 </div>
             </div>
@@ -74,6 +74,7 @@
                 $canViewClasses = $user->can('viewAny', \App\Models\SchoolClass::class);
                 $canViewStudents = $user->can('viewAny', \App\Models\Student::class);
                 $canViewTeachers = $user->can('viewAny', \App\Models\Teacher::class);
+                $canViewMyClasses = $user->can('viewTeacherClasses', \App\Models\SchoolClass::class);
             @endphp
 
             @if($canManageDeputies || $canViewClasses || $canViewStudents || $canViewTeachers)
@@ -176,6 +177,43 @@
                             </div>
 
                         @endif
+
+                    </nav>
+
+                </div>
+
+            @endif
+
+            {{-- Teacher Attendance --}}
+            @if($canViewMyClasses)
+
+                <div class="mb-5">
+
+                    <h3 class="text-xs font-semibold text-muted-foreground px-5 mb-3">
+                        آموزش
+                    </h3>
+
+                    <nav
+                        class="kt-menu flex flex-col w-full gap-1.5 px-3.5"
+                        data-kt-menu="true"
+                    >
+
+                        <div class="kt-menu-item {{ request()->routeIs('admin.my-classes.*') ? 'active' : '' }}">
+                            <a
+                                class="kt-menu-link gap-2.5 py-2.5 px-3 rounded-md
+                                       kt-menu-item-active:bg-accent/60
+                                       kt-menu-link-hover:bg-accent/60"
+                                href="{{ route('admin.my-classes.index') }}"
+                            >
+                                <span class="kt-menu-icon text-lg text-secondary-foreground">
+                                    <i class="ki-filled ki-calendar"></i>
+                                </span>
+
+                                <span class="kt-menu-title text-sm text-foreground font-medium">
+                                    کلاس‌های من
+                                </span>
+                            </a>
+                        </div>
 
                     </nav>
 

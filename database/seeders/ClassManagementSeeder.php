@@ -11,209 +11,160 @@ use Illuminate\Support\Facades\Hash;
 
 class ClassManagementSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        // Create test users with different ranks
-        User::updateOrCreate(
-            [
-                'national_code' => '1111111111',
-            ],
-            [
-                'first_name' => 'مدیر',
-                'last_name' => 'سیستم',
-                'phone' => '09111111111',
-                'is_admin' => true,
-                'password' => Hash::make('password'),
-                'rank' => RankEnum::MANAGER->value,
-                'grade' => null,
-            ]
-        );
+        // ================= ADMIN USERS =================
 
-        User::updateOrCreate(
-            [
-                'national_code' => '2222222222',
-            ],
-            [
-                'first_name' => 'معاون',
-                'last_name' => 'مجاز',
-                'phone' => '09222222222',
-                'is_admin' => true,
-                'password' => Hash::make('password'),
-                'rank' => RankEnum::DEPUTY->value,
-                'grade' => null,
-            ]
-        );
+        $admins = [
+            ['1111111111', 'مدیر', 'سیستم', '09111111111', RankEnum::MANAGER],
+            ['2222222222', 'معاون', 'مجاز', '09222222222', RankEnum::DEPUTY],
+            ['3333333333', 'معاون', 'دوم', '09333333333', RankEnum::DEPUTY],
+        ];
 
-        User::updateOrCreate(
-            [
-                'national_code' => '3333333333',
-            ],
-            [
-                'first_name' => 'معاون',
-                'last_name' => 'دوم',
-                'phone' => '09333333333',
-                'is_admin' => true,
-                'password' => Hash::make('password'),
-                'rank' => RankEnum::DEPUTY->value,
-                'grade' => null,
-            ]
-        );
+        foreach ($admins as [$nationalCode, $firstName, $lastName, $phone, $rank]) {
+            User::updateOrCreate(
+                ['national_code' => $nationalCode],
+                [
+                    'first_name' => $firstName,
+                    'last_name' => $lastName,
+                    'phone' => $phone,
+                    'is_admin' => true,
+                    'password' => Hash::make('password'),
+                    'rank' => $rank->value,
+                    'grade' => null,
+                ]
+            );
+        }
 
-        // Create teacher users
-        $teacher1 = User::updateOrCreate(
-            [
-                'national_code' => '4444444444',
-            ],
-            [
-                'first_name' => 'علی',
-                'last_name' => 'محمدی',
-                'phone' => '09444444444',
-                'is_admin' => true,
-                'password' => Hash::make('password'),
-                'rank' => RankEnum::TEACHER->value,
-                'grade' => null,
-            ]
-        );
+        // ================= TEACHERS =================
 
-        $teacher2 = User::updateOrCreate(
-            [
-                'national_code' => '5555555555',
-            ],
-            [
-                'first_name' => 'رضا',
-                'last_name' => 'احمدی',
-                'phone' => '09555555555',
-                'is_admin' => true,
-                'password' => Hash::make('password'),
-                'rank' => RankEnum::TEACHER->value,
-                'grade' => null,
-            ]
-        );
+        $teacherData = [
+            ['علی', 'محمدی', 'ریاضی'],
+            ['رضا', 'احمدی', 'فیزیک'],
+            ['حسین', 'کریمی', 'برنامه‌نویسی'],
+            ['مهدی', 'رضایی', 'شبکه'],
+            ['محمد', 'حسینی', 'برق صنعتی'],
+            ['امیر', 'موسوی', 'الکترونیک'],
+            ['سعید', 'اکبری', 'ادبیات فارسی'],
+            ['جواد', 'مرادی', 'زبان انگلیسی'],
+        ];
 
-        // Create student users
-        $student1 = User::updateOrCreate(
-            [
-                'national_code' => '6666666666',
-            ],
-            [
-                'first_name' => 'سارا',
-                'last_name' => 'کریم',
-                'phone' => '09666666666',
-                'is_admin' => false,
-                'password' => Hash::make('password'),
-                'rank' => RankEnum::STUDENT->value,
-                'grade' => 10,
-            ]
-        );
+        $teachers = [];
 
-        $student2 = User::updateOrCreate(
-            [
-                'national_code' => '7777777777',
-            ],
-            [
-                'first_name' => 'محمد',
-                'last_name' => 'نوری',
-                'phone' => '09777777777',
-                'is_admin' => false,
-                'password' => Hash::make('password'),
-                'rank' => RankEnum::STUDENT->value,
-                'grade' => 11,
-            ]
-        );
+        foreach ($teacherData as $index => [$firstName, $lastName, $subject]) {
+            $number = $index + 1;
 
-        // Create test classes
-        $class1 = SchoolClass::updateOrCreate(
-            [
-                'title' => 'دهم تجربی',
-            ],
-            [
-                'grade' => 10,
-            ]
-        );
+            $teacher = User::updateOrCreate(
+                [
+                    'national_code' => '444' . str_pad($number, 7, '0', STR_PAD_LEFT),
+                ],
+                [
+                    'first_name' => $firstName,
+                    'last_name' => $lastName,
+                    'phone' => '0912' . str_pad($number, 7, '0', STR_PAD_LEFT),
+                    'is_admin' => true,
+                    'password' => Hash::make('password'),
+                    'rank' => RankEnum::TEACHER->value,
+                    'grade' => null,
+                ]
+            );
 
-        $class2 = SchoolClass::updateOrCreate(
-            [
-                'title' => 'دهم ریاضی',
-            ],
-            [
-                'grade' => 10,
-            ]
-        );
+            $teachers[] = [
+                'model' => $teacher,
+                'subject' => $subject,
+            ];
+        }
 
-        $class3 = SchoolClass::updateOrCreate(
-            [
-                'title' => 'یازدهم تجربی',
-            ],
-            [
-                'grade' => 11,
-            ]
-        );
+        // ================= CLASSES =================
 
-        SchoolClass::updateOrCreate(
-            [
-                'title' => 'دوازدهم ریاضی',
-            ],
-            [
-                'grade' => 12,
-            ]
-        );
+        $classData = [
+            ['دهم کامپیوتر ۱', 10],
+            ['دهم برق ۱', 10],
+            ['یازدهم کامپیوتر ۱', 11],
+            ['یازدهم برق ۱', 11],
+            ['دوازدهم کامپیوتر ۱', 12],
+            ['دوازدهم برق ۱', 12],
+        ];
 
-        // Create some teacher assignments
-        DB::table('class_teachers')->insertOrIgnore([
-            'class_id' => $class1->id,
-            'teacher_id' => $teacher1->id,
-            'subject' => 'ریاضی',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        $classes = [];
 
-        DB::table('class_teachers')->insertOrIgnore([
-            'class_id' => $class1->id,
-            'teacher_id' => $teacher1->id,
-            'subject' => 'فیزیک',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        foreach ($classData as [$title, $grade]) {
+            $classes[] = SchoolClass::updateOrCreate(
+                ['title' => $title],
+                ['grade' => $grade]
+            );
+        }
 
-        DB::table('class_teachers')->insertOrIgnore([
-            'class_id' => $class2->id,
-            'teacher_id' => $teacher2->id,
-            'subject' => 'ریاضی',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        // ================= CLASS TEACHERS =================
 
-        DB::table('class_teachers')->insertOrIgnore([
-            'class_id' => $class3->id,
-            'teacher_id' => $teacher1->id,
-            'subject' => 'ریاضی',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        foreach ($classes as $classIndex => $class) {
+            // Assign four teachers to each class.
+            for ($i = 0; $i < 4; $i++) {
+                $teacherIndex = ($classIndex + $i) % count($teachers);
+                $teacher = $teachers[$teacherIndex];
 
-        // Create some student assignments
-        DB::table('class_students')->insertOrIgnore([
-            'class_id' => $class1->id,
-            'student_id' => $student1->id,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+                DB::table('class_teachers')->insertOrIgnore([
+                    'class_id' => $class->id,
+                    'teacher_id' => $teacher['model']->id,
+                    'subject' => $teacher['subject'],
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+        }
 
-        DB::table('class_students')->insertOrIgnore([
-            'class_id' => $class1->id,
-            'student_id' => $student2->id,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        // ================= STUDENTS =================
 
-        DB::table('class_students')->insertOrIgnore([
-            'class_id' => $class2->id,
-            'student_id' => $student1->id,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        $firstNames = [
+            'محمد', 'علی', 'حسین', 'رضا', 'امیر',
+            'مهدی', 'سینا', 'پارسا', 'آرین', 'کیان',
+            'سام', 'یاسین', 'طاها', 'ماهان', 'محمدرضا',
+            'ابوالفضل', 'عرفان', 'نیما', 'آرش', 'پویا',
+        ];
+
+        $lastNames = [
+            'محمدی', 'احمدی', 'کریمی', 'رضایی', 'حسینی',
+            'موسوی', 'اکبری', 'مرادی', 'جعفری', 'قاسمی',
+            'نوری', 'رحیمی', 'صادقی', 'امیری', 'زارعی',
+            'شریفی', 'کاظمی', 'عباسی', 'یوسفی', 'حیدری',
+        ];
+
+        $studentsPerClass = 10;
+
+        foreach ($classes as $classIndex => $class) {
+            for ($i = 1; $i <= $studentsPerClass; $i++) {
+                $number = ($classIndex * $studentsPerClass) + $i;
+
+                $firstName = $firstNames[($number - 1) % count($firstNames)];
+                $lastName = $lastNames[
+                ($number + intdiv($number, 3)) % count($lastNames)
+                ];
+
+                $student = User::updateOrCreate(
+                    [
+                        'national_code' => '666' . str_pad($number, 7, '0', STR_PAD_LEFT),
+                    ],
+                    [
+                        'first_name' => $firstName,
+                        'last_name' => $lastName,
+                        'phone' => '0990' . str_pad($number, 7, '0', STR_PAD_LEFT),
+                        'is_admin' => false,
+                        'password' => Hash::make('password'),
+                        'rank' => RankEnum::STUDENT->value,
+                        'grade' => $class->grade,
+                    ]
+                );
+
+                DB::table('class_students')->insertOrIgnore([
+                    'class_id' => $class->id,
+                    'student_id' => $student->id,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+        }
+
+        $this->command->info('Class Management Seeder completed.');
+        $this->command->info('8 teachers, 6 classes and 60 students seeded.');
     }
 }

@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\ClassTeacherController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\SchoolClassController;
 use App\Http\Controllers\Admin\StudentController;
+use App\Http\Controllers\Admin\TeacherClassController;
 use App\Http\Controllers\Admin\TeacherController;
 use Illuminate\Support\Facades\Route;
 
@@ -66,6 +67,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Teacher Management Routes
         Route::resource('teachers', TeacherController::class)
             ->except(['show']);
+
+        // Teacher Attendance Routes (teacher only)
+        Route::prefix('my-classes')->name('my-classes.')->group(function () {
+            Route::get('/', [TeacherClassController::class, 'index'])->name('index');
+            Route::get('/{schoolClass}', [TeacherClassController::class, 'show'])->name('show');
+            Route::post('/{schoolClass}/attendance', [TeacherClassController::class, 'storeAttendance'])->name('attendance.store');
+        });
 
         Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     });

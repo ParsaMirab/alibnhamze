@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\Enums\RankEnum;
+use App\Models\ClassTeacher;
 use App\Models\SchoolClass;
 use App\Models\User;
 
@@ -56,6 +57,29 @@ class SchoolClassPolicy
     public function delete(User $user, SchoolClass $schoolClass): bool
     {
         return $this->canManageClasses($user);
+    }
+
+    /**
+     * Determine if the user can open the "my classes" section (teachers only).
+     */
+    public function viewTeacherClasses(User $user): bool
+    {
+        return $user->rank === RankEnum::TEACHER->value;
+    }
+
+    /**
+     * Determine if the teacher is assigned to the given class.
+     */
+    public function manageAttendance(User $user, SchoolClass $schoolClass): bool
+    {
+        if ($user->rank !== RankEnum::TEACHER->value) {
+            return false;
+        }
+
+        return ClassTeacher::query()
+            ->where('class_id', $schoolClass->getKey())
+            ->where('teacher_id', $user->getKey())
+            ->exists();
     }
 
     /**

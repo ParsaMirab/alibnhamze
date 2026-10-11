@@ -3,8 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class SchoolClass extends Model
 {
@@ -70,5 +70,13 @@ class SchoolClass extends Model
     {
         return $this->belongsToMany(User::class, 'class_students', 'class_id', 'student_id')
             ->withTimestamps();
+    }
+
+    /**
+     * Get the absence records recorded for the class.
+     */
+    public function absences(): HasMany
+    {
+        return $this->hasMany(StudentAbsence::class, 'class_id');
     }
 }

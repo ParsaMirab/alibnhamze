@@ -174,11 +174,7 @@
                                         <td>
                                             <div class="flex flex-col gap-0.5">
                                             <span>
-                                                {{ $deputy->created_at?->format('Y/m/d') }}
-                                            </span>
-
-                                                <span class="text-xs text-secondary-foreground">
-                                                {{ $deputy->created_at?->format('H:i') }}
+                                                {{ \App\Helpers\Jalali::format($deputy->created_at) }}
                                             </span>
                                             </div>
                                         </td>
