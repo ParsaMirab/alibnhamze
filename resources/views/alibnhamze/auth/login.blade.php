@@ -25,7 +25,7 @@
                     {{-- Title --}}
                     <div class="text-center mb-8">
                         <h1 class="text-2xl sm:text-[28px] font-black text-slate-900 tracking-tight">
-                            ورود به سامانه دانش آموزی
+                            ورود به سامانه
                         </h1>
 
                         <p class="mt-3 text-sm text-slate-500 leading-6 max-w-xs mx-auto">

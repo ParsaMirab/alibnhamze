@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\ClassTeacherController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\SchoolClassController;
 use App\Http\Controllers\Admin\StudentController;
+use App\Http\Controllers\Admin\TeacherController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('admin')->name('admin.')->group(function () {
@@ -62,6 +63,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::put('/{student}', [StudentController::class, 'update'])->name('update');
             Route::delete('/{student}', [StudentController::class, 'destroy'])->name('destroy');
         });
+        // Teacher Management Routes
+        Route::resource('teachers', TeacherController::class)
+            ->except(['show']);
 
         Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     });
