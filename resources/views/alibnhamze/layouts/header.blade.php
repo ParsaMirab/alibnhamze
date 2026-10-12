@@ -10,15 +10,35 @@
         : '';
 
     $firstLetter = $isLoggedIn
-        ? mb_substr($user->first_name ?: 'ک', 0, 1)
+        ? mb_substr(($user->first_name ?: 'ک'), 0, 1)
         : '';
 
-    $isStudent = $isLoggedIn
-        && $user->rank === RankEnum::STUDENT->value;
+    // User rank
+    $rank = $isLoggedIn ? $user->rank : null;
 
-    $dashboardUrl = $isStudent
-        ? url('/student/dashboard')
-        : url('/parent/dashboard');
+    $isStudent = $rank === RankEnum::STUDENT->value;
+
+    $isAdminPanelUser = in_array($rank, [
+        RankEnum::MANAGER->value,
+        RankEnum::DEPUTY->value,
+        RankEnum::TEACHER->value,
+    ], true);
+
+    // Dashboard destination
+    $dashboardUrl = match (true) {
+        $isAdminPanelUser => route('admin.dashboard'),
+        $isStudent => url('/student/dashboard'),
+        default => url('/parent/dashboard'),
+    };
+
+    // User role label
+    $userRoleLabel = match ($rank) {
+        RankEnum::MANAGER->value => 'مدیر هنرستان',
+        RankEnum::DEPUTY->value => 'معاون هنرستان',
+        RankEnum::TEACHER->value => 'معلم',
+        RankEnum::STUDENT->value => 'دانش‌آموز',
+        default => 'ولی دانش‌آموز',
+    };
 
     $homeUrl = route('home');
 
@@ -291,7 +311,7 @@
                                     </p>
 
                                     <p class="mt-1 text-xs text-slate-500">
-                                        {{ $isStudent ? 'دانش‌آموز' : 'ولی دانش‌آموز' }}
+                                        {{ $userRoleLabel }}
                                     </p>
 
                                 </div>
@@ -412,7 +432,7 @@
                         </p>
 
                         <p class="mt-1 text-xs text-slate-500">
-                            {{ $isStudent ? 'دانش‌آموز' : 'ولی دانش‌آموز' }}
+                            {{ $userRoleLabel }}
                         </p>
                     </div>
                 </div>
