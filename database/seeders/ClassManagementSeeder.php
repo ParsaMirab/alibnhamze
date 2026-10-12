@@ -164,6 +164,95 @@ class ClassManagementSeeder extends Seeder
             }
         }
 
+        // ================= PARENTS =================
+
+        $fatherNames = [
+            'احمد', 'محمود', 'حسن', 'حسین', 'محمد',
+            'رضا', 'علی', 'مجید', 'حمید', 'مسعود',
+            'ناصر', 'جواد', 'کریم', 'عباس', 'اکبر',
+        ];
+
+        $motherNames = [
+            'فاطمه', 'زهرا', 'مریم', 'سمیه', 'نرگس',
+            'زینب', 'الهام', 'لیلا', 'معصومه', 'مینا',
+            'سارا', 'پروین', 'فرشته', 'مرضیه', 'شادی',
+        ];
+
+        $parentRelations = 0;
+
+        foreach ($classes as $classIndex => $class) {
+            for ($i = 1; $i <= $studentsPerClass; $i++) {
+
+                $number = ($classIndex * $studentsPerClass) + $i;
+
+                $student = User::where(
+                    'national_code',
+                    '666' . str_pad($number, 7, '0', STR_PAD_LEFT)
+                )->firstOrFail();
+
+                // ================= FATHER =================
+
+                $father = User::updateOrCreate(
+                    [
+                        'national_code' => '777' . str_pad($number, 7, '0', STR_PAD_LEFT),
+                    ],
+                    [
+                        'first_name' => $fatherNames[($number - 1) % count($fatherNames)],
+                        'last_name' => $student->last_name,
+                        'phone' => '0901' . str_pad($number, 7, '0', STR_PAD_LEFT),
+                        'is_admin' => false,
+                        'password' => Hash::make('password'),
+                        'rank' => RankEnum::PARENT->value,
+                        'grade' => null,
+                    ]
+                );
+
+                // ================= MOTHER =================
+
+                $mother = User::updateOrCreate(
+                    [
+                        'national_code' => '888' . str_pad($number, 7, '0', STR_PAD_LEFT),
+                    ],
+                    [
+                        'first_name' => $motherNames[($number - 1) % count($motherNames)],
+                        'last_name' => $lastNames[($number + 5) % count($lastNames)],
+                        'phone' => '0902' . str_pad($number, 7, '0', STR_PAD_LEFT),
+                        'is_admin' => false,
+                        'password' => Hash::make('password'),
+                        'rank' => RankEnum::PARENT->value,
+                        'grade' => null,
+                    ]
+                );
+
+
+// ================= PARENT RELATIONSHIPS =================
+
+                $parentRelations = $parentRelations ?? 0;
+
+                foreach ([
+                             ['parent' => $father, 'type' => 'father'],
+                             ['parent' => $mother, 'type' => 'mother'],
+                         ] as $parentData) {
+
+                    DB::table('student_parents')->updateOrInsert(
+                        [
+                            'student_id' => $student->id,
+                            'relationship_type' => $parentData['type'],
+                        ],
+                        [
+                            'parent_id' => $parentData['parent']->id,
+                            'updated_at' => now(),
+                        ]
+                    );
+
+                    $parentRelations++;
+                }
+
+
+            }
+        }
+
+
         $this->command->info('Class Management Seeder completed.');
         $this->command->info('8 teachers, 6 classes and 60 students seeded.');
     }

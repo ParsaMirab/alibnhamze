@@ -32,6 +32,9 @@ Route::get('/pre-register/success', [PreRegistrationController::class, 'success'
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-// Dashboards
+Route::get('/ourteam', function () {
+    return view('alibnhamze.our.index');
+})->name('ourteam');// Dashboards
+
 Route::get('/student/dashboard', [StudentDashboardController::class, 'index'])->name('student.dashboard')->middleware('auth');
 Route::get('/parent/dashboard', [ParentDashboardController::class, 'index'])->name('parent.dashboard')->middleware('auth');
