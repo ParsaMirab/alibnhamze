@@ -50,7 +50,7 @@
                                 <p class="text-[12.5px] text-amber-800/90 leading-6">
                                     فقط کادر مدرسه، اولیا و دانش‌آموزان هنرستان اجازه‌ی ورود دارند.
                                     در صورت درخواست ثبت‌نام، به هنرستان مراجعه کنید یا
-                                    <a href="#" class="font-bold text-amber-900 underline underline-offset-2 hover:text-amber-950">
+                                    <a href="{{ route('pre-register.create') }}" class="font-bold text-amber-900 underline underline-offset-2 hover:text-amber-950">
                                         فرم پیش‌ثبت‌نام
                                     </a>
                                     را ارسال نمایید.

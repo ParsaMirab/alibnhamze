@@ -2,6 +2,16 @@
 
 @section('title', 'پیش‌ثبت‌نام | هنرستان علی بن حمزه')
 
+@php
+    $step = $step ?? 'form';
+
+    // Human readable phone number for the OTP step.
+    $phoneDigits = preg_replace('/\D/', '', $phone ?? '');
+    $formattedPhone = strlen($phoneDigits) === 11
+        ? substr($phoneDigits, 0, 4).' '.substr($phoneDigits, 4, 3).' '.substr($phoneDigits, 7)
+        : ($phone ?? '');
+@endphp
+
 @section('content')
     <div dir="rtl" class="font-sans bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
         <main class="flex-1 flex items-start sm:items-center justify-center px-3 sm:px-6 lg:px-10 py-6 sm:py-10 lg:py-14">
@@ -31,372 +41,426 @@
                             دانش‌آموز عزیز، خوشحالیم که ما را انتخاب کردید 🌟
                         </p>
 
-                        {{-- Notice --}}
-                        <div class="mt-4 sm:mt-6 text-right rounded-xl sm:rounded-2xl
-                                    bg-amber-50/70 border border-amber-200/70
-                                    px-3 sm:px-4 py-3 sm:py-3.5
-                                    flex items-start gap-2.5 sm:gap-3">
-                            <div class="shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-amber-100 flex items-center justify-center mt-0.5">
-                                <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M12 9v2m0 4h.01M5.07 19h13.86a2 2 0 001.74-3L13.74 4a2 2 0 00-3.48 0L3.33 16a2 2 0 001.74 3z"/>
-                                </svg>
+                        @if ($step === 'form')
+                            {{-- Notice --}}
+                            <div class="mt-4 sm:mt-6 text-right rounded-xl sm:rounded-2xl
+                                        bg-amber-50/70 border border-amber-200/70
+                                        px-3 sm:px-4 py-3 sm:py-3.5
+                                        flex items-start gap-2.5 sm:gap-3">
+                                <div class="shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-amber-100 flex items-center justify-center mt-0.5">
+                                    <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M12 9v2m0 4h.01M5.07 19h13.86a2 2 0 001.74-3L13.74 4a2 2 0 00-3.48 0L3.33 16a2 2 0 001.74 3z"/>
+                                    </svg>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-xs sm:text-[13px] font-bold text-amber-900 mb-1">
+                                        توجه مهم
+                                    </p>
+                                    <p class="text-[11.5px] sm:text-[12.5px] text-amber-800/90 leading-5 sm:leading-6">
+                                        نسبت به درست بودن اطلاعات مطمئن باشید؛ زیرا در صورت
+                                        <b>تأیید درخواست پیش‌ثبت‌نام</b> و <b>اشتباه بودن اطلاعات</b>،
+                                        باید این فرم دوباره پر شود.
+                                    </p>
+                                </div>
                             </div>
-                            <div class="flex-1 min-w-0">
-                                <p class="text-xs sm:text-[13px] font-bold text-amber-900 mb-1">
-                                    توجه مهم
+                        @endif
+                    </div>
+
+                    @if ($step === 'form')
+                        {{-- ================= STEP 1: Form ================= --}}
+                        <div id="step-form">
+                            <form id="pre-register-form" method="POST" action="{{ route('pre-register.store') }}"
+                                  data-loading="1" data-require-grade="1"
+                                  class="space-y-4 sm:space-y-5">
+                                @csrf
+
+                                {{-- نام و نام خانوادگی --}}
+                                <div>
+                                    <label for="student_full_name" class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1.5 sm:mb-2">
+                                        نام و نام خانوادگی دانش‌آموز <span class="text-red-500">*</span>
+                                    </label>
+                                    <div class="relative">
+                                        <span class="hidden sm:flex absolute inset-y-0 right-0 items-center pr-4 pointer-events-none">
+                                            <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                            </svg>
+                                        </span>
+                                        <input type="text" id="student_full_name" name="student_full_name"
+                                               value="{{ old('student_full_name') }}"
+                                               placeholder="مثلاً: علی محمدی"
+                                               class="w-full pr-3.5 sm:pr-12 pl-3.5 sm:pl-4 py-3 sm:py-3.5 rounded-xl
+                                                      text-sm sm:text-base
+                                                      bg-slate-50 border @error('student_full_name') border-red-400 @else border-slate-200 @enderror
+                                                      text-slate-900 placeholder:text-slate-400
+                                                      focus:bg-white focus:border-[#0F3D62]
+                                                      focus:ring-2 focus:ring-[#0F3D62]/15 focus:outline-none
+                                                      transition-all duration-200">
+                                    </div>
+                                    @error('student_full_name')
+                                    <p class="mt-1.5 text-[11px] sm:text-xs text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                {{-- نام پدر و نام مادر --}}
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+                                    <div>
+                                        <label for="father_name" class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1.5 sm:mb-2">
+                                            نام پدر <span class="text-red-500">*</span>
+                                        </label>
+                                        <div class="relative">
+                                            <span class="hidden sm:flex absolute inset-y-0 right-0 items-center pr-4 pointer-events-none">
+                                                <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                          d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                                </svg>
+                                            </span>
+                                            <input type="text" id="father_name" name="father_name"
+                                                   value="{{ old('father_name') }}"
+                                                   placeholder="مثلاً: محمد"
+                                                   class="w-full pr-3.5 sm:pr-12 pl-3.5 sm:pl-4 py-3 sm:py-3.5 rounded-xl
+                                                          text-sm sm:text-base
+                                                          bg-slate-50 border @error('father_name') border-red-400 @else border-slate-200 @enderror
+                                                          text-slate-900 placeholder:text-slate-400
+                                                          focus:bg-white focus:border-[#0F3D62]
+                                                          focus:ring-2 focus:ring-[#0F3D62]/15 focus:outline-none
+                                                          transition-all duration-200">
+                                        </div>
+                                        @error('father_name')
+                                        <p class="mt-1.5 text-[11px] sm:text-xs text-red-600">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+
+                                    <div>
+                                        <label for="mother_full_name" class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1.5 sm:mb-2">
+                                            نام و نام خانوادگی مادر <span class="text-red-500">*</span>
+                                        </label>
+                                        <div class="relative">
+                                            <span class="hidden sm:flex absolute inset-y-0 right-0 items-center pr-4 pointer-events-none">
+                                                <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                          d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                                </svg>
+                                            </span>
+                                            <input type="text" id="mother_full_name" name="mother_full_name"
+                                                   value="{{ old('mother_full_name') }}"
+                                                   placeholder="مثلاً: زهرا احمدی"
+                                                   class="w-full pr-3.5 sm:pr-12 pl-3.5 sm:pl-4 py-3 sm:py-3.5 rounded-xl
+                                                          text-sm sm:text-base
+                                                          bg-slate-50 border @error('mother_full_name') border-red-400 @else border-slate-200 @enderror
+                                                          text-slate-900 placeholder:text-slate-400
+                                                          focus:bg-white focus:border-[#0F3D62]
+                                                          focus:ring-2 focus:ring-[#0F3D62]/15 focus:outline-none
+                                                          transition-all duration-200">
+                                        </div>
+                                        @error('mother_full_name')
+                                        <p class="mt-1.5 text-[11px] sm:text-xs text-red-600">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                {{-- کد ملی --}}
+                                <div>
+                                    <label for="national_code" class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1.5 sm:mb-2">
+                                        کد ملی دانش‌آموز <span class="text-red-500">*</span>
+                                    </label>
+                                    <div class="relative">
+                                        <span class="hidden sm:flex absolute inset-y-0 right-0 items-center pr-4 pointer-events-none">
+                                            <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                      d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.418.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"/>
+                                            </svg>
+                                        </span>
+                                        <input type="text" id="national_code" name="national_code"
+                                               inputmode="numeric" maxlength="10" dir="ltr" data-digits data-max="10"
+                                               value="{{ old('national_code') }}"
+                                               placeholder="0012345678"
+                                               class="w-full pr-3.5 sm:pr-12 pl-3.5 sm:pl-4 py-3 sm:py-3.5 rounded-xl
+                                                      text-sm sm:text-base text-left tracking-widest
+                                                      bg-slate-50 border @error('national_code') border-red-400 @else border-slate-200 @enderror
+                                                      text-slate-900 placeholder:text-slate-400
+                                                      focus:bg-white focus:border-[#0F3D62]
+                                                      focus:ring-2 focus:ring-[#0F3D62]/15 focus:outline-none
+                                                      transition-all duration-200">
+                                    </div>
+                                    <p class="mt-1.5 text-[11px] sm:text-xs text-slate-400">۱۰ رقم بدون خط تیره</p>
+                                    @error('national_code')
+                                    <p class="mt-1.5 text-[11px] sm:text-xs text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                {{-- پایه تحصیلی --}}
+                                <div>
+                                    <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1.5 sm:mb-2">
+                                        پایه تحصیلی <span class="text-red-500">*</span>
+                                    </label>
+
+                                    <input type="hidden" name="grade" id="grade-input" value="{{ old('grade') }}">
+
+                                    <div class="grid grid-cols-3 gap-1.5 sm:gap-2 p-1 sm:p-1.5 rounded-xl bg-slate-50
+                                                border @error('grade') border-red-400 @else border-slate-200 @enderror">
+                                        @foreach (['دهم' => 10, 'یازدهم' => 11, 'دوازدهم' => 12] as $label => $val)
+                                            @php $isActive = (string) old('grade') === (string) $val; @endphp
+                                            <button type="button"
+                                                    data-grade="{{ $val }}"
+                                                    aria-pressed="{{ $isActive ? 'true' : 'false' }}"
+                                                    class="grade-btn py-2.5 sm:py-3 rounded-lg
+                                                           text-xs sm:text-sm font-bold
+                                                           {{ $isActive ? 'bg-white text-[#0F3D62] shadow-sm' : 'text-slate-600 hover:text-[#0F3D62]' }}
+                                                           transition-all duration-200">
+                                                {{ $label }}
+                                            </button>
+                                        @endforeach
+                                    </div>
+
+                                    <p id="grade-error" class="{{ $errors->has('grade') ? '' : 'hidden' }} mt-1.5 text-[11px] sm:text-xs text-red-600">
+                                        {{ $errors->first('grade') }}
+                                    </p>
+                                </div>
+
+                                {{-- معدل و انضباط --}}
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+                                    <div>
+                                        <label for="previous_year_average" class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1.5 sm:mb-2">
+                                            معدل کل سال تحصیلی قبل <span class="text-red-500">*</span>
+                                        </label>
+                                        <div class="relative">
+                                            <span class="hidden sm:flex absolute inset-y-0 right-0 items-center pr-4 pointer-events-none">
+                                                <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                          d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                                </svg>
+                                            </span>
+                                            <input type="text" id="previous_year_average" name="previous_year_average"
+                                                   inputmode="decimal" dir="ltr"
+                                                   value="{{ old('previous_year_average') }}"
+                                                   placeholder="18.75"
+                                                   class="w-full pr-3.5 sm:pr-12 pl-3.5 sm:pl-4 py-3 sm:py-3.5 rounded-xl
+                                                          text-sm sm:text-base text-left
+                                                          bg-slate-50 border @error('previous_year_average') border-red-400 @else border-slate-200 @enderror
+                                                          text-slate-900 placeholder:text-slate-400
+                                                          focus:bg-white focus:border-[#0F3D62]
+                                                          focus:ring-2 focus:ring-[#0F3D62]/15 focus:outline-none
+                                                          transition-all duration-200">
+                                        </div>
+                                        <p class="mt-1.5 text-[11px] sm:text-xs text-slate-400">بین ۰ تا ۲۰ (حداکثر دو رقم اعشار)</p>
+                                        @error('previous_year_average')
+                                        <p class="mt-1.5 text-[11px] sm:text-xs text-red-600">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+
+                                    <div>
+                                        <label for="previous_year_discipline_score" class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1.5 sm:mb-2">
+                                            نمره انضباط سال قبل <span class="text-red-500">*</span>
+                                        </label>
+                                        <div class="relative">
+                                            <span class="hidden sm:flex absolute inset-y-0 right-0 items-center pr-4 pointer-events-none">
+                                                <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                          d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+                                                </svg>
+                                            </span>
+                                            <input type="text" id="previous_year_discipline_score" name="previous_year_discipline_score"
+                                                   inputmode="decimal" dir="ltr"
+                                                   value="{{ old('previous_year_discipline_score') }}"
+                                                   placeholder="20"
+                                                   class="w-full pr-3.5 sm:pr-12 pl-3.5 sm:pl-4 py-3 sm:py-3.5 rounded-xl
+                                                          text-sm sm:text-base text-left
+                                                          bg-slate-50 border @error('previous_year_discipline_score') border-red-400 @else border-slate-200 @enderror
+                                                          text-slate-900 placeholder:text-slate-400
+                                                          focus:bg-white focus:border-[#0F3D62]
+                                                          focus:ring-2 focus:ring-[#0F3D62]/15 focus:outline-none
+                                                          transition-all duration-200">
+                                        </div>
+                                        <p class="mt-1.5 text-[11px] sm:text-xs text-slate-400">بین ۰ تا ۲۰ (حداکثر دو رقم اعشار)</p>
+                                        @error('previous_year_discipline_score')
+                                        <p class="mt-1.5 text-[11px] sm:text-xs text-red-600">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                {{-- شماره موبایل --}}
+                                <div>
+                                    <label for="phone_number" class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1.5 sm:mb-2">
+                                        شماره تلفن همراه <span class="text-red-500">*</span>
+                                    </label>
+                                    <div class="relative">
+                                        <span class="hidden sm:flex absolute inset-y-0 right-0 items-center pr-4 pointer-events-none">
+                                            <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                      d="M3 5a2 2 0 012-2h2.28a1 1 0 01.95.68l1.1 3.3a1 1 0 01-.24 1.05L7.6 9.6a12 12 0 005.8 5.8l1.57-1.49a1 1 0 011.05-.24l3.3 1.1a1 1 0 01.68.95V19a2 2 0 01-2 2A16 16 0 013 5z"/>
+                                            </svg>
+                                        </span>
+                                        <input type="tel" id="phone_number" name="phone_number"
+                                               inputmode="numeric" maxlength="11" dir="ltr" data-digits data-max="11"
+                                               value="{{ old('phone_number') }}"
+                                               placeholder="09123456789"
+                                               class="w-full pr-3.5 sm:pr-12 pl-3.5 sm:pl-4 py-3 sm:py-3.5 rounded-xl
+                                                      text-sm sm:text-base text-left tracking-widest
+                                                      bg-slate-50 border @error('phone_number') border-red-400 @else border-slate-200 @enderror
+                                                      text-slate-900 placeholder:text-slate-400
+                                                      focus:bg-white focus:border-[#0F3D62]
+                                                      focus:ring-2 focus:ring-[#0F3D62]/15 focus:outline-none
+                                                      transition-all duration-200">
+                                    </div>
+                                    <p class="mt-1.5 text-[11px] sm:text-xs text-slate-400">
+                                        کد تأیید ۶ رقمی به این شماره پیامک می‌شود
+                                    </p>
+                                    @error('phone_number')
+                                    <p class="mt-1.5 text-[11px] sm:text-xs text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                {{-- دکمه‌ی ادامه --}}
+                                <button type="submit" id="go-to-otp"
+                                        class="w-full inline-flex items-center justify-center gap-2
+                                               py-3 sm:py-3.5 rounded-xl bg-[#0F3D62] text-white
+                                               text-sm font-bold
+                                               shadow-lg shadow-[#0F3D62]/25
+                                               hover:bg-[#0a2d4a] active:bg-[#0a2d4a]
+                                               disabled:opacity-60 disabled:cursor-not-allowed
+                                               transition-all duration-200">
+                                    <span>تأیید شماره و ادامه</span>
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M15 19l-7-7 7-7"/>
+                                    </svg>
+                                </button>
+                            </form>
+                        </div>
+                    @elseif ($step === 'otp')
+                        {{-- ================= STEP 2: OTP ================= --}}
+                        <div id="step-otp">
+                            <div class="text-center mb-6">
+                                <div class="flex justify-center mb-4">
+                                    <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-[#0F3D62]/10 flex items-center justify-center">
+                                        <svg class="w-6 h-6 sm:w-7 sm:h-7 text-[#0F3D62]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                                        </svg>
+                                    </div>
+                                </div>
+
+                                <h2 class="text-lg sm:text-xl font-black text-slate-900">
+                                    تأیید شماره تلفن همراه
+                                </h2>
+
+                                <p class="mt-2 text-xs sm:text-sm text-slate-500 leading-6">
+                                    کد تأیید ۶ رقمی به شماره
+                                    <span dir="ltr" class="inline-block font-bold text-slate-900">{{ $formattedPhone }}</span>
+                                    ارسال شد.
                                 </p>
-                                <p class="text-[11.5px] sm:text-[12.5px] text-amber-800/90 leading-5 sm:leading-6">
-                                    نسبت به درست بودن اطلاعات مطمئن باشید؛ زیرا در صورت
-                                    <b>تأیید درخواست پیش‌ثبت‌نام</b> و <b>اشتباه بودن اطلاعات</b>،
-                                    باید این فرم دوباره پر شود.
-                                </p>
+                            </div>
+
+                            @if (session('success'))
+                                <div class="mb-5 rounded-xl bg-emerald-50 border border-emerald-200 px-4 py-3 text-[12.5px] text-emerald-800 leading-6">
+                                    {{ session('success') }}
+                                </div>
+                            @endif
+
+                            <div class="space-y-4 sm:space-y-5">
+                                <form id="otp-form" method="POST" action="{{ route('pre-register.otp.verify') }}" data-loading="1">
+                                    @csrf
+
+                                    <div>
+                                        <label for="code" class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1.5 sm:mb-2 text-center">
+                                            کد تأیید
+                                        </label>
+                                        <input
+                                            type="text"
+                                            id="code"
+                                            name="code"
+                                            inputmode="numeric"
+                                            autocomplete="one-time-code"
+                                            maxlength="6"
+                                            data-digits
+                                            data-max="6"
+                                            value="{{ old('code') }}"
+                                            placeholder="- - - - - -"
+                                            dir="ltr"
+                                            class="w-full px-4 py-3.5 sm:py-4 rounded-xl text-center
+                                                   tracking-[0.5em] sm:tracking-[0.6em]
+                                                   text-xl sm:text-2xl font-black
+                                                   bg-slate-50 border @error('code') border-red-400 @else border-slate-200 @enderror
+                                                   text-slate-900 placeholder:text-slate-300
+                                                   focus:bg-white focus:border-[#0F3D62]
+                                                   focus:ring-2 focus:ring-[#0F3D62]/15 focus:outline-none
+                                                   transition-all duration-200">
+                                        @error('code')
+                                        <p class="mt-2 text-xs text-red-600 text-center">{{ $message }}</p>
+                                        @enderror
+                                        @error('phone_number')
+                                        <p class="mt-2 text-xs text-red-600 text-center">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+
+                                    <button type="submit" id="verify-otp"
+                                            class="mt-4 w-full inline-flex items-center justify-center gap-2
+                                                   py-3 sm:py-3.5 rounded-xl bg-[#0F3D62] text-white
+                                                   text-sm font-bold
+                                                   shadow-lg shadow-[#0F3D62]/25
+                                                   hover:bg-[#0a2d4a] active:bg-[#0a2d4a]
+                                                   disabled:opacity-60 disabled:cursor-not-allowed
+                                                   transition-all duration-200">
+                                        <span>تأیید و ثبت نهایی</span>
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M15 19l-7-7 7-7"/>
+                                        </svg>
+                                    </button>
+                                </form>
+
+                                {{-- Resend / Edit --}}
+                                <div class="flex items-center justify-between text-[11px] sm:text-xs pt-1">
+                                    <form method="POST" action="{{ route('pre-register.edit-phone') }}">
+                                        @csrf
+                                        <button type="submit" id="edit-info"
+                                                class="inline-flex items-center gap-1 text-slate-500
+                                                       hover:text-[#0F3D62] transition-colors">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                            </svg>
+                                            ویرایش اطلاعات
+                                        </button>
+                                    </form>
+
+                                    <form method="POST" action="{{ route('pre-register.otp.resend') }}" data-loading="1">
+                                        @csrf
+                                        <button type="submit" id="resend-code"
+                                                data-remaining="{{ $resendAvailableIn ?? 0 }}"
+                                                class="font-semibold text-[#0F3D62] disabled:text-slate-400
+                                                       disabled:cursor-not-allowed transition-colors">
+                                            ارسال مجدد کد
+                                            <span id="resend-timer"></span>
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
-                    </div>
-
-                    {{-- ================= STEP 1: Form ================= --}}
-                    <div id="step-form">
-                        <form id="pre-register-form" method="POST" action="#" class="space-y-4 sm:space-y-5">
-                            @csrf
-                            <input type="hidden" name="phone" id="final-phone" value="{{ old('phone') }}">
-                            <input type="hidden" name="otp_verified" id="otp-verified" value="0">
-
-                            {{-- نام و نام خانوادگی --}}
-                            <div>
-                                <label for="full_name" class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1.5 sm:mb-2">
-                                    نام و نام خانوادگی دانش‌آموز
-                                </label>
-                                <div class="relative">
-                                    <span class="hidden sm:flex absolute inset-y-0 right-0 items-center pr-4 pointer-events-none">
-                                        <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                                        </svg>
-                                    </span>
-                                    <input type="text" id="full_name" name="full_name"
-                                           value="{{ old('full_name') }}"
-                                           placeholder="مثلاً: علی محمدی"
-                                           class="w-full pr-3.5 sm:pr-12 pl-3.5 sm:pl-4 py-3 sm:py-3.5 rounded-xl
-                                                  text-sm sm:text-base
-                                                  bg-slate-50 border border-slate-200
-                                                  text-slate-900 placeholder:text-slate-400
-                                                  focus:bg-white focus:border-[#0F3D62]
-                                                  focus:ring-2 focus:ring-[#0F3D62]/15 focus:outline-none
-                                                  transition-all duration-200">
-                                </div>
-                                @error('full_name')
-                                <p class="mt-1.5 text-[11px] sm:text-xs text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            {{-- نام پدر و نام مادر --}}
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
-                                <div>
-                                    <label for="father_name" class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1.5 sm:mb-2">
-                                        نام پدر
-                                    </label>
-                                    <div class="relative">
-                                        <span class="hidden sm:flex absolute inset-y-0 right-0 items-center pr-4 pointer-events-none">
-                                            <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                                            </svg>
-                                        </span>
-                                        <input type="text" id="father_name" name="father_name"
-                                               value="{{ old('father_name') }}"
-                                               placeholder="مثلاً: محمد"
-                                               class="w-full pr-3.5 sm:pr-12 pl-3.5 sm:pl-4 py-3 sm:py-3.5 rounded-xl
-                                                      text-sm sm:text-base
-                                                      bg-slate-50 border border-slate-200
-                                                      text-slate-900 placeholder:text-slate-400
-                                                      focus:bg-white focus:border-[#0F3D62]
-                                                      focus:ring-2 focus:ring-[#0F3D62]/15 focus:outline-none
-                                                      transition-all duration-200">
-                                    </div>
-                                    @error('father_name')
-                                    <p class="mt-1.5 text-[11px] sm:text-xs text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
-
-                                <div>
-                                    <label for="mother_full_name" class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1.5 sm:mb-2">
-                                        نام و نام خانوادگی مادر
-                                    </label>
-                                    <div class="relative">
-                                        <span class="hidden sm:flex absolute inset-y-0 right-0 items-center pr-4 pointer-events-none">
-                                            <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                                            </svg>
-                                        </span>
-                                        <input type="text" id="mother_full_name" name="mother_full_name"
-                                               value="{{ old('mother_full_name') }}"
-                                               placeholder="مثلاً: زهرا احمدی"
-                                               class="w-full pr-3.5 sm:pr-12 pl-3.5 sm:pl-4 py-3 sm:py-3.5 rounded-xl
-                                                      text-sm sm:text-base
-                                                      bg-slate-50 border border-slate-200
-                                                      text-slate-900 placeholder:text-slate-400
-                                                      focus:bg-white focus:border-[#0F3D62]
-                                                      focus:ring-2 focus:ring-[#0F3D62]/15 focus:outline-none
-                                                      transition-all duration-200">
-                                    </div>
-                                    @error('mother_full_name')
-                                    <p class="mt-1.5 text-[11px] sm:text-xs text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            {{-- کد ملی --}}
-                            <div>
-                                <label for="national_code" class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1.5 sm:mb-2">
-                                    کد ملی دانش‌آموز
-                                </label>
-                                <div class="relative">
-                                    <span class="hidden sm:flex absolute inset-y-0 right-0 items-center pr-4 pointer-events-none">
-                                        <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                  d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.418.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"/>
-                                        </svg>
-                                    </span>
-                                    <input type="text" id="national_code" name="national_code"
-                                           inputmode="numeric" maxlength="10" dir="ltr"
-                                           value="{{ old('national_code') }}"
-                                           placeholder="0012345678"
-                                           class="w-full pr-3.5 sm:pr-12 pl-3.5 sm:pl-4 py-3 sm:py-3.5 rounded-xl
-                                                  text-sm sm:text-base text-left tracking-widest
-                                                  bg-slate-50 border border-slate-200
-                                                  text-slate-900 placeholder:text-slate-400
-                                                  focus:bg-white focus:border-[#0F3D62]
-                                                  focus:ring-2 focus:ring-[#0F3D62]/15 focus:outline-none
-                                                  transition-all duration-200">
-                                </div>
-                                <p class="mt-1.5 text-[11px] sm:text-xs text-slate-400">۱۰ رقم بدون خط تیره</p>
-                                @error('national_code')
-                                <p class="mt-1.5 text-[11px] sm:text-xs text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            {{-- پایه تحصیلی --}}
-                            <div>
-                                <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1.5 sm:mb-2">
-                                    پایه تحصیلی
-                                </label>
-
-                                <input type="hidden" name="grade" id="grade-input" value="{{ old('grade') }}">
-
-                                <div class="grid grid-cols-3 gap-1.5 sm:gap-2 p-1 sm:p-1.5 rounded-xl bg-slate-50 border border-slate-200">
-                                    @foreach (['دهم' => 10, 'یازدهم' => 11, 'دوازدهم' => 12] as $label => $val)
-                                        <button type="button"
-                                                data-grade="{{ $val }}"
-                                                class="grade-btn py-2.5 sm:py-3 rounded-lg
-                                                       text-xs sm:text-sm font-bold
-                                                       text-slate-600 hover:text-[#0F3D62]
-                                                       transition-all duration-200
-                                                       {{ old('grade') == $val ? 'bg-white text-[#0F3D62] shadow-sm' : '' }}">
-                                            {{ $label }}
-                                        </button>
-                                    @endforeach
-                                </div>
-
-                                @error('grade')
-                                <p class="mt-1.5 text-[11px] sm:text-xs text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            {{-- معدل و انضباط --}}
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
-                                <div>
-                                    <label for="gpa" class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1.5 sm:mb-2">
-                                        معدل کل سال تحصیلی قبل
-                                    </label>
-                                    <div class="relative">
-                                        <span class="hidden sm:flex absolute inset-y-0 right-0 items-center pr-4 pointer-events-none">
-                                            <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                      d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                                            </svg>
-                                        </span>
-                                        <input type="text" id="gpa" name="gpa"
-                                               inputmode="decimal" dir="ltr"
-                                               value="{{ old('gpa') }}"
-                                               placeholder="18.75"
-                                               class="w-full pr-3.5 sm:pr-12 pl-3.5 sm:pl-4 py-3 sm:py-3.5 rounded-xl
-                                                      text-sm sm:text-base text-left
-                                                      bg-slate-50 border border-slate-200
-                                                      text-slate-900 placeholder:text-slate-400
-                                                      focus:bg-white focus:border-[#0F3D62]
-                                                      focus:ring-2 focus:ring-[#0F3D62]/15 focus:outline-none
-                                                      transition-all duration-200">
-                                    </div>
-                                    <p class="mt-1.5 text-[11px] sm:text-xs text-slate-400">بین ۰ تا ۲۰</p>
-                                    @error('gpa')
-                                    <p class="mt-1.5 text-[11px] sm:text-xs text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
-
-                                <div>
-                                    <label for="discipline_score" class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1.5 sm:mb-2">
-                                        نمره انضباط سال قبل
-                                    </label>
-                                    <div class="relative">
-                                        <span class="hidden sm:flex absolute inset-y-0 right-0 items-center pr-4 pointer-events-none">
-                                            <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                      d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
-                                            </svg>
-                                        </span>
-                                        <input type="text" id="discipline_score" name="discipline_score"
-                                               inputmode="decimal" dir="ltr"
-                                               value="{{ old('discipline_score') }}"
-                                               placeholder="20"
-                                               class="w-full pr-3.5 sm:pr-12 pl-3.5 sm:pl-4 py-3 sm:py-3.5 rounded-xl
-                                                      text-sm sm:text-base text-left
-                                                      bg-slate-50 border border-slate-200
-                                                      text-slate-900 placeholder:text-slate-400
-                                                      focus:bg-white focus:border-[#0F3D62]
-                                                      focus:ring-2 focus:ring-[#0F3D62]/15 focus:outline-none
-                                                      transition-all duration-200">
-                                    </div>
-                                    <p class="mt-1.5 text-[11px] sm:text-xs text-slate-400">بین ۰ تا ۲۰</p>
-                                    @error('discipline_score')
-                                    <p class="mt-1.5 text-[11px] sm:text-xs text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            {{-- شماره موبایل --}}
-                            <div>
-                                <label for="phone" class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1.5 sm:mb-2">
-                                    شماره تلفن همراه
-                                </label>
-                                <div class="relative">
-                                    <span class="hidden sm:flex absolute inset-y-0 right-0 items-center pr-4 pointer-events-none">
-                                        <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                  d="M3 5a2 2 0 012-2h2.28a1 1 0 01.95.68l1.1 3.3a1 1 0 01-.24 1.05L7.6 9.6a12 12 0 005.8 5.8l1.57-1.49a1 1 0 011.05-.24l3.3 1.1a1 1 0 01.68.95V19a2 2 0 01-2 2A16 16 0 013 5z"/>
-                                        </svg>
-                                    </span>
-                                    <input type="tel" id="phone" name="phone"
-                                           inputmode="numeric" maxlength="11" dir="ltr"
-                                           value="{{ old('phone') }}"
-                                           placeholder="09123456789"
-                                           class="w-full pr-3.5 sm:pr-12 pl-3.5 sm:pl-4 py-3 sm:py-3.5 rounded-xl
-                                                  text-sm sm:text-base text-left tracking-widest
-                                                  bg-slate-50 border border-slate-200
-                                                  text-slate-900 placeholder:text-slate-400
-                                                  focus:bg-white focus:border-[#0F3D62]
-                                                  focus:ring-2 focus:ring-[#0F3D62]/15 focus:outline-none
-                                                  transition-all duration-200">
-                                </div>
-                                <p class="mt-1.5 text-[11px] sm:text-xs text-slate-400">
-                                    کد تأیید ۶ رقمی به این شماره پیامک می‌شود
-                                </p>
-                                @error('phone')
-                                <p class="mt-1.5 text-[11px] sm:text-xs text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            {{-- دکمه‌ی ادامه --}}
-                            <button type="button" id="go-to-otp"
-                                    class="w-full inline-flex items-center justify-center gap-2
-                                           py-3 sm:py-3.5 rounded-xl bg-[#0F3D62] text-white
-                                           text-sm font-bold
-                                           shadow-lg shadow-[#0F3D62]/25
-                                           hover:bg-[#0a2d4a] active:bg-[#0a2d4a]
-                                           transition-all duration-200">
-                                تأیید شماره و ادامه
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M15 19l-7-7 7-7"/>
-                                </svg>
-                            </button>
-                        </form>
-                    </div>
-
-                    {{-- ================= STEP 2: OTP ================= --}}
-                    <div id="step-otp" class="hidden">
-                        <div class="text-center mb-6">
-                            <div class="flex justify-center mb-4">
-                                <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-[#0F3D62]/10 flex items-center justify-center">
-                                    <svg class="w-6 h-6 sm:w-7 sm:h-7 text-[#0F3D62]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    @else
+                        {{-- ================= STEP 3: Success ================= --}}
+                        <div id="step-success" class="text-center">
+                            <div class="flex justify-center mb-5">
+                                <div class="w-14 h-14 rounded-2xl bg-emerald-50 flex items-center justify-center">
+                                    <svg class="w-7 h-7 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                              d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                                              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
                                 </div>
                             </div>
 
                             <h2 class="text-lg sm:text-xl font-black text-slate-900">
-                                تأیید شماره تلفن همراه
+                                درخواست پیش‌ثبت‌نام شما با موفقیت ثبت شد.
                             </h2>
 
-                            <p class="mt-2 text-xs sm:text-sm text-slate-500 leading-6">
-                                کد تأیید ۶ رقمی به شماره
-                                <span id="phone-display" dir="ltr"
-                                      class="inline-block font-bold text-slate-900"></span>
-                                ارسال شد
+                            <p class="mt-3 text-xs sm:text-sm text-slate-500 leading-6 max-w-md mx-auto">
+                                از اینکه هنرستان علی بن حمزه را انتخاب کردید سپاسگزاریم. کارشناسان ما
+                                پس از بررسی اطلاعات، در اسرع وقت با شما تماس خواهند گرفت.
                             </p>
                         </div>
-
-                        <div class="space-y-4 sm:space-y-5">
-                            <div>
-                                <label for="otp_code" class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1.5 sm:mb-2 text-center">
-                                    کد تأیید
-                                </label>
-                                <input
-                                    type="text"
-                                    id="otp_code"
-                                    inputmode="numeric"
-                                    autocomplete="one-time-code"
-                                    maxlength="6"
-                                    placeholder="- - - - - -"
-                                    dir="ltr"
-                                    class="w-full px-4 py-3.5 sm:py-4 rounded-xl text-center
-                                           tracking-[0.5em] sm:tracking-[0.6em]
-                                           text-xl sm:text-2xl font-black
-                                           bg-slate-50 border border-slate-200
-                                           text-slate-900 placeholder:text-slate-300
-                                           focus:bg-white focus:border-[#0F3D62]
-                                           focus:ring-2 focus:ring-[#0F3D62]/15 focus:outline-none
-                                           transition-all duration-200">
-                                <p id="otp-error" class="hidden mt-2 text-xs text-red-600 text-center"></p>
-                            </div>
-
-                            <button type="button" id="verify-otp"
-                                    class="w-full inline-flex items-center justify-center gap-2
-                                           py-3 sm:py-3.5 rounded-xl bg-[#0F3D62] text-white
-                                           text-sm font-bold
-                                           shadow-lg shadow-[#0F3D62]/25
-                                           hover:bg-[#0a2d4a] active:bg-[#0a2d4a]
-                                           transition-all duration-200">
-                                تأیید و ثبت نهایی
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M15 19l-7-7 7-7"/>
-                                </svg>
-                            </button>
-
-                            {{-- Resend / Edit --}}
-                            <div class="flex items-center justify-between text-[11px] sm:text-xs pt-1">
-                                <button type="button" id="edit-info"
-                                        class="inline-flex items-center gap-1 text-slate-500
-                                               hover:text-[#0F3D62] transition-colors">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                    </svg>
-                                    ویرایش اطلاعات
-                                </button>
-
-                                <button type="button" id="resend-code"
-                                        class="font-semibold text-[#0F3D62] disabled:text-slate-400
-                                               disabled:cursor-not-allowed transition-colors">
-                                    ارسال مجدد کد
-                                    <span id="resend-timer"></span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                    @endif
 
                 </div>
 
@@ -432,96 +496,98 @@
     {{-- ================= Scripts ================= --}}
     <script>
         (function () {
-            // ===== مراجع DOM =====
-            const stepForm  = document.getElementById('step-form');
-            const stepOtp   = document.getElementById('step-otp');
+            'use strict';
 
-            const phoneInput = document.getElementById('phone');
-            const finalPhone = document.getElementById('final-phone');
-
-            const goToOtpBtn  = document.getElementById('go-to-otp');
-            const editInfoBtn = document.getElementById('edit-info');
-            const verifyBtn   = document.getElementById('verify-otp');
-            const resendBtn   = document.getElementById('resend-code');
-            const resendTimer = document.getElementById('resend-timer');
-
-            const phoneDisplay = document.getElementById('phone-display');
-            const otpCode      = document.getElementById('otp_code');
-
-            const gradeInput = document.getElementById('grade-input');
-            const buttons    = document.querySelectorAll('.grade-btn');
-
-            // ===== سوییچ پایه تحصیلی =====
-            function setActive(btn) {
-                buttons.forEach(b => {
-                    b.classList.remove('bg-white', 'text-[#0F3D62]', 'shadow-sm');
-                    b.classList.add('text-slate-600');
-                });
-                btn.classList.remove('text-slate-600');
-                btn.classList.add('bg-white', 'text-[#0F3D62]', 'shadow-sm');
+            // ===== Persian/Arabic digits → ASCII, digits only =====
+            function normalizeDigits(value) {
+                return value
+                    .replace(/[۰-۹]/g, d => String.fromCharCode(d.charCodeAt(0) - 1728))
+                    .replace(/[٠-٩]/g, d => String.fromCharCode(d.charCodeAt(0) - 1584));
             }
 
-            buttons.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    gradeInput.value = btn.dataset.grade;
-                    setActive(btn);
+            document.querySelectorAll('[data-digits]').forEach(function (input) {
+                input.addEventListener('input', function () {
+                    const max = parseInt(input.getAttribute('data-max') || '0', 10);
+                    let value = normalizeDigits(input.value).replace(/[^\d]/g, '');
+                    if (max > 0) value = value.slice(0, max);
+                    input.value = value;
                 });
             });
 
-            // ===== مرحله ۱ → ۲ =====
-            goToOtpBtn?.addEventListener('click', function () {
-                const phone = phoneInput.value.trim();
-                finalPhone.value = phone;
+            // ===== Grade segmented switch =====
+            const gradeInput = document.getElementById('grade-input');
+            const gradeButtons = document.querySelectorAll('.grade-btn');
+            const gradeError = document.getElementById('grade-error');
 
-                stepForm.classList.add('hidden');
-                stepOtp.classList.remove('hidden');
+            function activateGrade(button) {
+                gradeButtons.forEach(function (btn) {
+                    btn.classList.remove('bg-white', 'text-[#0F3D62]', 'shadow-sm');
+                    btn.classList.add('text-slate-600');
+                    btn.setAttribute('aria-pressed', 'false');
+                });
 
-                phoneDisplay.textContent = phone;
-                otpCode?.focus();
+                button.classList.remove('text-slate-600');
+                button.classList.add('bg-white', 'text-[#0F3D62]', 'shadow-sm');
+                button.setAttribute('aria-pressed', 'true');
 
-                startResendTimer(60);
+                if (gradeInput) gradeInput.value = button.dataset.grade;
+                if (gradeError) gradeError.classList.add('hidden');
+            }
 
-                fetch('#', {...})
+            gradeButtons.forEach(function (button) {
+                button.addEventListener('click', function () {
+                    activateGrade(button);
+                });
             });
 
-            // ===== بازگشت به فرم =====
-            editInfoBtn?.addEventListener('click', function () {
-                stepOtp.classList.add('hidden');
-                stepForm.classList.remove('hidden');
-            });
+            if (gradeInput && gradeInput.value) {
+                const active = document.querySelector('.grade-btn[data-grade="' + gradeInput.value + '"]');
+                if (active) activateGrade(active);
+            }
 
-            // ===== تأیید کد و ارسال نهایی =====
-            verifyBtn?.addEventListener('click', function () {
-                // TODO: ارسال درخواست به سرور برای تأیید کد
-                // بعد از تأیید موفق، فرم نهایی را submit کن:
-                // preForm.submit();
-            });
+            // ===== Submit handling: grade guard + double-submit protection =====
+            document.querySelectorAll('form[data-loading]').forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (form.dataset.requireGrade === '1' && gradeInput && !gradeInput.value) {
+                        event.preventDefault();
 
-            // ===== تایمر ارسال مجدد =====
-            let timerId = null;
+                        if (gradeError) {
+                            gradeError.textContent = 'لطفاً پایه تحصیلی را انتخاب کنید.';
+                            gradeError.classList.remove('hidden');
+                        }
 
-            function startResendTimer(seconds) {
-                if (timerId) clearInterval(timerId);
-                resendBtn.disabled = true;
-                let remaining = seconds;
-
-                const tick = () => {
-                    resendTimer.textContent = remaining > 0 ? ` (${remaining})` : '';
-                    if (remaining <= 0) {
-                        clearInterval(timerId);
-                        resendBtn.disabled = false;
                         return;
                     }
-                    remaining--;
-                };
-                tick();
-                timerId = setInterval(tick, 1000);
-            }
 
-            resendBtn?.addEventListener('click', function () {
-                // TODO: درخواست ارسال مجدد کد
-                startResendTimer(60);
+                    const button = form.querySelector('button[type="submit"]');
+                    if (button) {
+                        button.disabled = true;
+                        button.classList.add('opacity-60', 'cursor-not-allowed');
+                    }
+                });
             });
+
+            // ===== Resend cooldown countdown =====
+            const resendButton = document.getElementById('resend-code');
+            const resendTimer = document.getElementById('resend-timer');
+
+            if (resendButton && resendTimer) {
+                let remaining = parseInt(resendButton.dataset.remaining || '0', 10);
+
+                const tick = function () {
+                    if (remaining > 0) {
+                        resendButton.disabled = true;
+                        resendTimer.textContent = '(' + remaining + ')';
+                        remaining -= 1;
+                        window.setTimeout(tick, 1000);
+                    } else {
+                        resendButton.disabled = false;
+                        resendTimer.textContent = '';
+                    }
+                };
+
+                if (remaining > 0) tick();
+            }
         })();
     </script>
 @endsection

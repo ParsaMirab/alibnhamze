@@ -2,16 +2,19 @@
 
 namespace App\Http\Controllers\Alibnhamze;
 
+use App\Enums\OtpType;
 use App\Enums\RankEnum;
 use App\Http\Controllers\Controller;
-use App\Models\Otps;
 use App\Models\User;
+use App\Services\OtpService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
+    public function __construct(private readonly OtpService $otpService) {}
+
     public function showLoginForm()
     {
         return view('alibnhamze.auth.login');
@@ -27,7 +30,7 @@ class AuthController extends Controller
 
         $user = User::where('phone', $phone)->first();
 
-        if (!$user) {
+        if (! $user) {
             return back()
                 ->withErrors([
                     'phone' => 'این شماره موبایل در سامانه ثبت نشده است.',
@@ -37,16 +40,19 @@ class AuthController extends Controller
                 ]);
         }
 
-        $otpCode = 123456;
+        $otpCode = '123456';
 
-        Otps::where('phone', $phone)->delete();
+        // Only login codes are invalidated: pre-registration OTPs for the same
+        // phone number must survive untouched.
+        $this->otpService->invalidate($phone, OtpType::LOGIN);
 
-        Otps::create([
-            'user_id' => $user->id,
-            'phone' => $phone,
-            'code' => $otpCode,
-            'expires_at' => Carbon::now()->addMinutes(10),
-        ]);
+        $this->otpService->store(
+            $phone,
+            OtpType::LOGIN,
+            $otpCode,
+            Carbon::now()->addMinutes(10),
+            $user->id,
+        );
 
         // Beta Mode
         session([
@@ -75,14 +81,10 @@ class AuthController extends Controller
         $phone = $request->input('phone');
         $code = $request->input('code');
 
-        // پیدا کردن OTP معتبر
-        $otp = Otps::where('phone', $phone)
-            ->where('code', $code)
-            ->where('expires_at', '>', Carbon::now())
-            ->whereNull('used_at')
-            ->first();
+        // پیدا کردن OTP معتبر — تنها کدهای ورود مجاز هستند
+        $otp = $this->otpService->find($phone, OtpType::LOGIN, $code);
 
-        if (!$otp) {
+        if (! $otp) {
             return back()
                 ->withErrors([
                     'code' => 'کد تأیید نامعتبر یا منقضی شده است.',
@@ -96,7 +98,7 @@ class AuthController extends Controller
         $user = User::where('phone', $phone)->first();
 
         // اگر User بین ارسال OTP و Verify حذف شده باشد
-        if (!$user) {
+        if (! $user) {
             return back()
                 ->withErrors([
                     'code' => 'کاربر مربوط به این شماره در سامانه یافت نشد.',
@@ -107,10 +109,8 @@ class AuthController extends Controller
         }
 
         // OTP مصرف شده
-        $otp->update([
-            'user_id' => $user->id,
-            'used_at' => Carbon::now(),
-        ]);
+        $otp->forceFill(['user_id' => $user->id])->save();
+        $this->otpService->consume($otp);
 
         // Login اصلی
         Auth::login($user);
@@ -147,11 +147,6 @@ class AuthController extends Controller
 
             default => route('home'),
         };
-    }
-
-    public function preRegister()
-    {
-        return view('alibnhamze.auth.pre-register');
     }
 
     public function logout(Request $request)

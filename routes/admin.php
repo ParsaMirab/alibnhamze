@@ -1,15 +1,16 @@
 <?php
 
+use App\Http\Controllers\Admin\AbsenceController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\ClassStudentController;
 use App\Http\Controllers\Admin\ClassTeacherController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\PreRegistrationController;
 use App\Http\Controllers\Admin\SchoolClassController;
 use App\Http\Controllers\Admin\StudentController;
 use App\Http\Controllers\Admin\TeacherClassController;
 use App\Http\Controllers\Admin\TeacherController;
-use App\Http\Controllers\Admin\AbsenceController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('admin')->name('admin.')->group(function () {
@@ -75,9 +76,17 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('/{schoolClass}', [TeacherClassController::class, 'show'])->name('show');
             Route::post('/{schoolClass}/attendance', [TeacherClassController::class, 'storeAttendance'])->name('attendance.store');
         });
+        // Pre-Registration Management Routes (manager / deputy only via policy)
+        Route::prefix('pre-registrations')->name('pre-registrations.')->group(function () {
+            Route::get('/', [PreRegistrationController::class, 'index'])->name('index');
+            Route::get('/{preRegistration}', [PreRegistrationController::class, 'show'])->name('show');
+            Route::patch('/{preRegistration}/approve', [PreRegistrationController::class, 'approve'])->name('approve');
+            Route::patch('/{preRegistration}/reject', [PreRegistrationController::class, 'reject'])->name('reject');
+        });
+
         Route::prefix('absences')->name('absences.')->group(function () {
             Route::get('/', [AbsenceController::class, 'index'])->name('index');
-            Route::patch('status' , [AbsenceController::class, 'updateStatus'])->name('status');
+            Route::patch('status', [AbsenceController::class, 'updateStatus'])->name('status');
             Route::post('send-warning', [AbsenceController::class, 'sendWarnings'])->name('send-warning');
         });
 

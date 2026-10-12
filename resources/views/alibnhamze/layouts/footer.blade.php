@@ -65,7 +65,7 @@
         <div class="mt-10 sm:mt-14 pt-6 sm:pt-8 border-t border-slate-800
                             flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-4
                             text-xs text-slate-500 text-center sm:text-right">
-            <p>© ۱۴۰۴ هنرستان علی بن حمزه. تمامی حقوق محفوظ است.</p>
+            <p>© 1405 هنرستان علی بن حمزه. تمامی حقوق محفوظ است.</p>
             <div class="flex gap-5">
                 <a href="#" class="hover:text-white transition-colors">قوانین</a>
                 <a href="#" class="hover:text-white transition-colors">حریم خصوصی</a>

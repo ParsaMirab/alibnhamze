@@ -101,6 +101,7 @@
                 $canManageDeputies = $user->rank === RankEnum::MANAGER->value;
                 $canViewClasses = $user->can('viewAny', \App\Models\SchoolClass::class);
                 $canViewStudents = $user->can('viewAny', \App\Models\Student::class);
+                $canViewPreRegistrations = $user->can('viewAny', \App\Models\PreRegistration::class);
                 $canViewTeachers = $user->can('viewAny', \App\Models\Teacher::class);
                 $canViewMyClasses = $user->can('viewTeacherClasses', \App\Models\SchoolClass::class);
                 $canManageAbsences = in_array($user->rank, [
@@ -109,7 +110,7 @@
                 ], true);
             @endphp
 
-            @if($canManageDeputies || $canViewClasses || $canViewStudents || $canViewTeachers || $canManageAbsences)
+            @if($canManageDeputies || $canViewClasses || $canViewStudents || $canViewPreRegistrations || $canViewTeachers || $canManageAbsences)
 
                 <div class="mb-5">
 
@@ -182,6 +183,28 @@
 
                                     <span class="kt-menu-title text-sm text-foreground font-medium">
                                         مدیریت دانش‌آموزان
+                                    </span>
+                                </a>
+                            </div>
+
+                        @endif
+
+                        {{-- Pre-Registrations --}}
+                        @if($canViewPreRegistrations)
+
+                            <div class="kt-menu-item {{ request()->routeIs('admin.pre-registrations.*') ? 'active' : '' }}">
+                                <a
+                                    class="kt-menu-link gap-2.5 py-2.5 px-3 rounded-md
+                                           kt-menu-item-active:bg-accent/60
+                                           kt-menu-link-hover:bg-accent/60"
+                                    href="{{ route('admin.pre-registrations.index') }}"
+                                >
+                                    <span class="kt-menu-icon text-lg text-secondary-foreground">
+                                        <i class="ki-filled ki-notepad-edit"></i>
+                                    </span>
+
+                                    <span class="kt-menu-title text-sm text-foreground font-medium">
+                                        پیش‌ثبت‌نام‌ها
                                     </span>
                                 </a>
                             </div>

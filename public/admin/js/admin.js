@@ -30,9 +30,10 @@
         });
     });
 
-    document.querySelectorAll('[data-confirm-delete]').forEach((form) => {
+    document.querySelectorAll('[data-confirm-delete], [data-confirm]').forEach((form) => {
         form.addEventListener('submit', (event) => {
-            const message = form.dataset.confirmDelete
+            const message = form.dataset.confirm
+                || form.dataset.confirmDelete
                 || 'آیا از حذف این پرسش متداول مطمئن هستید؟ این عملیات قابل بازگشت نیست.';
 
             if (!window.confirm(message)) {

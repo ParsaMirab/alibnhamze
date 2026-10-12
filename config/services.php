@@ -35,4 +35,19 @@ return [
         ],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | SMS Gateway (OTP delivery)
+    |--------------------------------------------------------------------------
+    |
+    | The `log` driver writes a masked record of every message instead of
+    | sending anything. Point the driver at a real gateway implementation
+    | before going to production.
+    |
+    */
+
+    'sms' => [
+        'driver' => env('SMS_DRIVER', 'log'),
+    ],
+
 ];
