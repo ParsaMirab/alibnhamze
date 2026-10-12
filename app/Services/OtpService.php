@@ -105,13 +105,22 @@ class OtpService
      *
      * @throws OtpSendingFailedException when the provider did not accept the message.
      */
+
     public function issue(string $phone, OtpType $type, array $options = []): Otps
     {
+        // Fixed OTP only for local pre-registration testing.
+        $isTestMode = app()->environment('local')
+            && $type === OtpType::PRE_REGISTER;
+
         $this->invalidate($phone, $type);
 
-        $code = $options['code'] ?? $this->generateCode($options['length'] ?? 6);
+        $code = $isTestMode
+            ? '123456'
+            : ($options['code'] ?? $this->generateCode($options['length'] ?? 6));
+
         $ttlMinutes = $options['ttl_minutes'] ?? 2;
 
+        // Always persist the OTP in the database.
         $otp = $this->store(
             $phone,
             $type,
@@ -120,11 +129,14 @@ class OtpService
             $options['user_id'] ?? null,
         );
 
+        // Local testing: OTP is stored, but no real SMS is sent.
+        if ($isTestMode) {
+            return $otp;
+        }
+
         $message = $this->message($type, $code, $ttlMinutes);
 
         if (! $this->sms->send($phone, $message)) {
-            // A failed delivery must never look like a successful send, and the
-            // undeliverable code must not stay usable.
             $otp->delete();
 
             throw new OtpSendingFailedException;
