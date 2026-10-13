@@ -132,7 +132,7 @@
                     </div>
 
                     <span dir="ltr" class="text-xs font-bold tracking-[.2em] text-slate-400">
-                        03 / MEMBERS
+                        02 / MEMBERS
                     </span>
 
                 </div>
