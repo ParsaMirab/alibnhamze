@@ -20,13 +20,6 @@
                 'description' => 'طراحی رابط کاربری و تجربه کاربری',
                 'icon' => 'design',
             ],
-            [
-                'number' => '03',
-                'name' => 'Ali Zare',
-                'role' => 'Sponsor',
-                'description' => 'حمایت مالی و فراهم‌سازی امکانات پروژه',
-                'icon' => 'support',
-            ],
         ];
     @endphp
 
