@@ -266,7 +266,7 @@
                             @if($homeSettings['registration_url'])
                                 <a href="{{ $homeSettings['registration_url'] }}" class="inline-flex min-h-12 items-center gap-3 rounded-xl bg-white px-6 py-3 text-xs font-bold text-[#0F3D62] hover:bg-[#EAF0F5]">شروع ثبت‌نام ←</a>
                             @endif
-                            <a href="{{ $homeSettings['contact_url'] ?: '#ab-contact' }}" class="inline-flex min-h-12 items-center gap-3 rounded-xl border border-white/40 px-6 py-3 text-xs font-bold text-white transition-colors hover:bg-white/10">ارتباط با هنرستان ←</a>
+                            <a href="{{route('pre-register.create')}}" class="inline-flex min-h-12 items-center gap-3 rounded-xl border border-white/40 px-6 py-3 text-xs font-bold text-white transition-colors hover:bg-white/10">پیش ثبت نام</a>
                         </div>
                     </div>
                     <div class="relative divide-y divide-white/20">
@@ -339,19 +339,6 @@
                         <details class="group py-5 first:pt-0"><summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-sm font-bold marker:hidden [&::-webkit-details-marker]:hidden">چه رشته‌هایی معرفی شده‌اند؟ <span class="text-xl font-normal text-[#0F3D62] group-open:rotate-45">+</span></summary><p class="pt-3 text-xs leading-8 text-[#596B7A]">در این صفحه با دو مسیر کامپیوتر و برق آشنا می‌شوید. عنوان رسمی رشته‌ها، شرایط پذیرش و ظرفیت هر پایه را از دفتر هنرستان بپرسید.</p></details>
                         <details class="group py-5"><summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-sm font-bold marker:hidden [&::-webkit-details-marker]:hidden">چطور از شرایط ثبت‌نام مطلع شویم؟ <span class="text-xl font-normal text-[#0F3D62] group-open:rotate-45">+</span></summary><p class="pt-3 text-xs leading-8 text-[#596B7A]">برای دریافت اطلاعات دقیق و به‌روز درباره شرایط و زمان ثبت‌نام، با دفتر هنرستان هماهنگ شوید.</p></details>
                         <details class="group py-5"><summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-sm font-bold marker:hidden [&::-webkit-details-marker]:hidden">برای انتخاب رشته از کجا شروع کنیم؟ <span class="text-xl font-normal text-[#0F3D62] group-open:rotate-45">+</span></summary><p class="pt-3 text-xs leading-8 text-[#596B7A]">علاقه‌ها، توانایی‌ها و هدف تحصیلی خود را بررسی کنید. گفت‌وگو با خانواده و مشاور تحصیلی می‌تواند به انتخاب آگاهانه کمک کند.</p></details>
-                    </div>
-                </div>
-
-                {{-- Contact --}}
-                <div id="ab-contact" class="mt-12 flex scroll-mt-24 flex-col gap-4 border-t border-[#E3E9ED] pt-7 sm:flex-row sm:items-center sm:justify-between">
-                    <p class="text-xs leading-8 text-[#596B7A]"><strong class="text-sm text-[#142C40]">دفتر هنرستان علی بن حمزه</strong><br>{{ $homeSettings['address'] ?: 'برای راهنمایی ثبت‌نام، به دفتر هنرستان مراجعه کنید.' }}</p>
-                    <div class="flex flex-wrap items-center gap-5">
-                        @if($homeSettings['phone'])
-                            <a href="tel:{{ $homeSettings['phone'] }}" class="text-sm font-bold text-[#0F3D62]" dir="ltr">{{ $homeSettings['phone_label'] ?: $homeSettings['phone'] }}</a>
-                        @endif
-                        @if($homeSettings['contact_url'])
-                            <a href="{{ $homeSettings['contact_url'] }}" class="text-xs font-bold text-[#0F3D62]">اطلاعات تماس و مسیر دسترسی ←</a>
-                        @endif
                     </div>
                 </div>
             </div>

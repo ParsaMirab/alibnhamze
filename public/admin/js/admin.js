@@ -8,12 +8,30 @@
         document.body.classList.toggle('overflow-hidden', open);
     };
 
+    const closeSidebar = () => setSidebar(false);
+
     document.querySelectorAll('[data-admin-sidebar-toggle]').forEach((button) => {
         button.addEventListener('click', () => setSidebar(!sidebar?.classList.contains('is-open')));
     });
 
     document.querySelectorAll('[data-admin-sidebar-close]').forEach((element) => {
-        element.addEventListener('click', () => setSidebar(false));
+        element.addEventListener('click', closeSidebar);
+    });
+
+    // The mobile drawer must always start closed, including when the browser
+    // restores the page from the back/forward cache with a stale open state.
+    window.addEventListener('pageshow', closeSidebar);
+
+    window.addEventListener('resize', () => {
+        if (window.innerWidth >= 1024) {
+            closeSidebar();
+        }
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+            closeSidebar();
+        }
     });
 
     document.querySelectorAll('[data-admin-password-toggle]').forEach((button) => {

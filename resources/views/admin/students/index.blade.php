@@ -49,64 +49,245 @@
 
         <div class="kt-card kt-card-grid min-w-full">
 
-            <div class="kt-card-header py-5 flex-wrap gap-2">
+            <div class="kt-card-header flex-wrap gap-2 py-3.5 sm:py-5">
 
-                <div class="flex items-center gap-2.5">
+                <div class="min-w-0">
                     <h2 class="kt-card-title">
                         فهرست دانش‌آموزان
                     </h2>
 
-                    <span class="kt-badge kt-badge-outline">
-                        {{ $students->total() }} مورد
-                    </span>
+                    <p class="mt-1 text-xs text-secondary-foreground">
+                        جستجو بر اساس نام، نام خانوادگی، کد ملی یا شماره تلفن
+                    </p>
                 </div>
 
-                <form class="flex items-center gap-2 w-full sm:w-auto"
-                      method="GET"
-                      action="{{ route('admin.students.index') }}">
-
-                    <label class="kt-input w-full sm:w-72">
-                        <i class="ki-filled ki-magnifier"></i>
-
-                        <input
-                            name="search"
-                            placeholder="جستجو در نام، نام خانوادگی، کد ملی یا تلفن"
-                            type="search"
-                            value="{{ $search ?? '' }}"
-                        >
-                    </label>
-
-                    <label class="kt-input w-full sm:w-44">
-                        <select name="grade" class="kt-select">
-                            <option value="">همه پایه‌ها</option>
-                            <option value="10" {{ (string) $gradeFilter === '10' ? 'selected' : '' }}>پایه دهم</option>
-                            <option value="11" {{ (string) $gradeFilter === '11' ? 'selected' : '' }}>پایه یازدهم</option>
-                            <option value="12" {{ (string) $gradeFilter === '12' ? 'selected' : '' }}>پایه دوازدهم</option>
-                        </select>
-                    </label>
-
-                    <button class="kt-btn kt-btn-outline" type="submit">
-                        فیلتر
-                    </button>
-
-                    @if (($search ?? '') !== '' || ($gradeFilter ?? '') !== '')
-                        <a
-                            class="kt-btn kt-btn-sm kt-btn-icon kt-btn-ghost"
-                            href="{{ route('admin.students.index') }}"
-                            title="پاک‌کردن فیلترها"
-                        >
-                            <i class="ki-filled ki-cross"></i>
-                        </a>
-                    @endif
-
-                </form>
+                <span class="kt-badge kt-badge-outline shrink-0">
+                    {{ number_format($students->total()) }} مورد
+                </span>
 
             </div>
 
 
             <div class="kt-card-content">
 
-                <div class="grid">
+                {{-- Search & filter --}}
+                <div class="border-b border-border p-3 sm:p-4">
+
+                    <form class="flex flex-wrap items-center gap-2 w-full"
+                          method="GET"
+                          action="{{ route('admin.students.index') }}">
+
+                        <label class="kt-input w-full sm:w-72">
+                            <i class="ki-filled ki-magnifier"></i>
+
+                            <input
+                                name="search"
+                                placeholder="جستجو در نام، نام خانوادگی، کد ملی یا تلفن"
+                                type="search"
+                                value="{{ $search ?? '' }}"
+                            >
+                        </label>
+
+                        <label class="kt-input w-full sm:w-44">
+                            <select name="grade" class="kt-select">
+                                <option value="">همه پایه‌ها</option>
+                                <option value="10" {{ (string) $gradeFilter === '10' ? 'selected' : '' }}>پایه دهم</option>
+                                <option value="11" {{ (string) $gradeFilter === '11' ? 'selected' : '' }}>پایه یازدهم</option>
+                                <option value="12" {{ (string) $gradeFilter === '12' ? 'selected' : '' }}>پایه دوازدهم</option>
+                            </select>
+                        </label>
+
+                        <input type="hidden" name="per_page" value="{{ $perPage ?? 10 }}">
+
+                        <button class="kt-btn kt-btn-primary w-full justify-center sm:w-auto" type="submit">
+                            <i class="ki-filled ki-magnifier"></i>
+                            فیلتر
+                        </button>
+
+                        @if (($search ?? '') !== '' || ($gradeFilter ?? '') !== '')
+                            <a
+                                class="kt-btn kt-btn-outline w-full justify-center sm:w-auto"
+                                href="{{ route('admin.students.index') }}"
+                            >
+                                <i class="ki-filled ki-cross"></i>
+                                حذف فیلتر
+                            </a>
+                        @endif
+
+                    </form>
+
+                </div>
+
+
+                {{-- Mobile: stacked cards --}}
+                <div class="space-y-3 p-3 sm:p-4 lg:hidden">
+
+                    @forelse ($students as $student)
+
+                        <article class="rounded-xl border border-border bg-background p-4">
+
+                            <div class="flex items-start justify-between gap-3">
+
+                                <div class="flex min-w-0 items-center gap-3">
+
+                                    <div class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                                        <i class="ki-filled ki-profile-user text-lg"></i>
+                                    </div>
+
+                                    <div class="min-w-0">
+                                        <h3 class="truncate text-sm font-semibold text-mono">
+                                            {{ $student->first_name }} {{ $student->last_name }}
+                                        </h3>
+
+                                        <p class="mt-1 text-[11px] text-secondary-foreground">
+                                            کد ملی:
+                                            <span dir="ltr" class="inline-block">
+                                                {{ $student->national_code }}
+                                            </span>
+                                        </p>
+                                    </div>
+
+                                </div>
+
+                                <span class="shrink-0 kt-badge kt-badge-outline text-mono">
+                                    #{{ $student->id }}
+                                </span>
+
+                            </div>
+
+
+                            <div class="my-3 grid grid-cols-2 gap-2 rounded-lg bg-muted/40 p-3">
+
+                                <div>
+                                    <p class="text-[11px] text-secondary-foreground">
+                                        شماره تلفن
+                                    </p>
+
+                                    <p class="mt-1 text-sm font-semibold text-mono" dir="ltr">
+                                        {{ $student->phone ?: '—' }}
+                                    </p>
+                                </div>
+
+                                <div class="border-r border-border pr-3">
+                                    <p class="text-[11px] text-secondary-foreground">
+                                        پایه تحصیلی
+                                    </p>
+
+                                    <p class="mt-1 text-sm font-semibold text-mono">
+                                        @if ($student->grade == 10)
+                                            پایه دهم
+                                        @elseif ($student->grade == 11)
+                                            پایه یازدهم
+                                        @elseif ($student->grade == 12)
+                                            پایه دوازدهم
+                                        @else
+                                            —
+                                        @endif
+                                    </p>
+                                </div>
+
+                                <div>
+                                    <p class="text-[11px] text-secondary-foreground">
+                                        اطلاعات پدر
+                                    </p>
+
+                                    <div class="mt-1">
+                                        @if ($student->father)
+                                            <span class="kt-badge kt-badge-light kt-badge-primary">
+                                                ثبت شده
+                                            </span>
+                                        @else
+                                            <span class="kt-badge kt-badge-light kt-badge-secondary">
+                                                ثبت نشده
+                                            </span>
+                                        @endif
+                                    </div>
+                                </div>
+
+                                <div class="border-r border-border pr-3">
+                                    <p class="text-[11px] text-secondary-foreground">
+                                        اطلاعات مادر
+                                    </p>
+
+                                    <div class="mt-1">
+                                        @if ($student->mother)
+                                            <span class="kt-badge kt-badge-light kt-badge-primary">
+                                                ثبت شده
+                                            </span>
+                                        @else
+                                            <span class="kt-badge kt-badge-light kt-badge-secondary">
+                                                ثبت نشده
+                                            </span>
+                                        @endif
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+                            <div class="flex items-center gap-2">
+
+                                @can('update', $student)
+                                    <a
+                                        class="kt-btn kt-btn-sm kt-btn-outline flex-1 justify-center"
+                                        href="{{ route('admin.students.edit', $student) }}"
+                                    >
+                                        <i class="ki-filled ki-pencil"></i>
+                                        ویرایش
+                                    </a>
+                                @endcan
+
+                                @can('delete', $student)
+                                    <form
+                                        class="flex-1"
+                                        method="POST"
+                                        action="{{ route('admin.students.destroy', $student) }}"
+                                        data-confirm-delete="آیا از حذف این دانش‌آموز مطمئن هستید؟ والدین او حذف نخواهند شد."
+                                    >
+
+                                        @csrf
+                                        @method('DELETE')
+
+                                        <button
+                                            class="kt-btn kt-btn-sm kt-btn-outline w-full justify-center text-destructive"
+                                            type="submit"
+                                        >
+                                            <i class="ki-filled ki-trash"></i>
+                                            حذف
+                                        </button>
+
+                                    </form>
+                                @endcan
+
+                            </div>
+
+                        </article>
+
+                    @empty
+
+                        <div class="py-10 text-center">
+                            <i class="ki-filled ki-profile-user text-3xl text-secondary-foreground"></i>
+
+                            <p class="mt-3 text-sm font-semibold text-mono">
+                                دانش‌آموزی پیدا نشد
+                            </p>
+
+                            <p class="mt-1 text-xs text-secondary-foreground">
+                                @if (($search ?? '') !== '' || ($gradeFilter ?? '') !== '')
+                                    دانش‌آموزی با مشخصات جستجوشده پیدا نشد.
+                                @else
+                                    هنوز هیچ دانش‌آموزی ثبت نشده است.
+                                @endif
+                            </p>
+                        </div>
+
+                    @endforelse
+
+                </div>
+
+
+                {{-- Desktop: table --}}
+                <div class="hidden lg:block">
 
                     <div class="kt-scrollable-x-auto">
 
@@ -283,7 +464,11 @@
                                             </div>
 
                                             <p class="text-sm text-secondary-foreground">
-                                                هنوز هیچ دانش‌آموزی ثبت نشده است.
+                                                @if (($search ?? '') !== '' || ($gradeFilter ?? '') !== '')
+                                                    دانش‌آموزی با مشخصات جستجوشده پیدا نشد.
+                                                @else
+                                                    هنوز هیچ دانش‌آموزی ثبت نشده است.
+                                                @endif
                                             </p>
                                         </div>
                                     </td>
@@ -297,39 +482,40 @@
 
                     </div>
 
-                    <div class="kt-card-footer justify-center md:justify-between flex-col md:flex-row gap-5 text-secondary-foreground text-sm font-medium">
+                </div>
 
-                        <form class="flex items-center gap-2 order-2 md:order-1"
-                              method="GET"
-                              action="{{ route('admin.students.index') }}">
-                            <span>
-                                نمایش
-                            </span>
 
-                            <select class="kt-select w-20" name="per_page" onchange="this.form.submit()">
-                                @foreach ([10, 25, 50] as $size)
-                                    <option value="{{ $size }}" {{ (int) ($perPage ?? 10) === $size ? 'selected' : '' }}>
-                                        {{ $size }}
-                                    </option>
-                                @endforeach
-                            </select>
+                <div class="kt-card-footer justify-center md:justify-between flex-col md:flex-row gap-5 text-secondary-foreground text-sm font-medium">
 
-                            <span>
-                                در هر صفحه
-                            </span>
+                    <form class="flex items-center gap-2 order-2 md:order-1"
+                          method="GET"
+                          action="{{ route('admin.students.index') }}">
+                        <span>
+                            نمایش
+                        </span>
 
-                            <input type="hidden" name="search" value="{{ $search ?? '' }}">
-                            <input type="hidden" name="grade" value="{{ $gradeFilter ?? '' }}">
-                        </form>
+                        <select class="kt-select w-20" name="per_page" onchange="this.form.submit()">
+                            @foreach ([10, 25, 50] as $size)
+                                <option value="{{ $size }}" {{ (int) ($perPage ?? 10) === $size ? 'selected' : '' }}>
+                                    {{ $size }}
+                                </option>
+                            @endforeach
+                        </select>
 
-                        <div class="flex items-center gap-4 order-1 md:order-2">
-                            <span>
-                                {{ $students->total() }} مورد
-                            </span>
+                        <span>
+                            در هر صفحه
+                        </span>
 
-                            @include('admin.partials.pagination', ['paginator' => $students])
-                        </div>
+                        <input type="hidden" name="search" value="{{ $search ?? '' }}">
+                        <input type="hidden" name="grade" value="{{ $gradeFilter ?? '' }}">
+                    </form>
 
+                    <div class="flex items-center gap-4 order-1 md:order-2">
+                        <span>
+                            {{ number_format($students->total()) }} مورد
+                        </span>
+
+                        @include('admin.partials.pagination', ['paginator' => $students])
                     </div>
 
                 </div>
